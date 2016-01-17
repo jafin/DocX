@@ -65,7 +65,7 @@ namespace Novacode
         /// using (DocX document = DocX.Load(@"Test.docx"))
         /// {
         ///    // Get all of the hyperlinks in this document
-        ///    List&lt;Hyperlink&gt; hyperlinks = document.Hyperlinks;
+        ///    List<Hyperlink> hyperlinks = document.Hyperlinks;
         ///    
         ///    // Change the first hyperlinks text and Uri
         ///    Hyperlink h0 = hyperlinks[0];
@@ -140,7 +140,6 @@ namespace Novacode
         /// <example>
         /// Change the Uri of a Hyperlink.
         /// <code>
-        /// <![CDATA[
         /// // Create a document.
         /// using (DocX document = DocX.Load(@"Test.docx"))
         /// {
@@ -155,7 +154,6 @@ namespace Novacode
         ///    // Save this document.
         ///    document.Save();
         /// }
-        /// ]]>
         /// </code>
         /// </example>
         public Uri Uri 
