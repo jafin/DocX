@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using System.IO.Packaging;
 
 namespace Novacode
 {
@@ -15,7 +15,7 @@ namespace Novacode
         internal Uri uri;
         internal String text;
 
-        internal Dictionary<PackagePart, PackageRelationship> hyperlink_rels;
+        //internal Dictionary<PackagePart, PackageRelationship> hyperlink_rels;
         internal int type;
         internal String id;
         internal XElement instrText;
@@ -81,7 +81,7 @@ namespace Novacode
         { 
             get
             {
-                return this.text;
+                return text;
             } 
 
             set
@@ -130,7 +130,7 @@ namespace Novacode
                     runs.ForEach(r => r.Remove());
                 }
 
-                this.text = value;
+                text = value;
             } 
         }
 
@@ -168,7 +168,7 @@ namespace Novacode
                     return r.TargetUri;
                 }
 
-                return this.uri;
+                return uri;
             } 
 
             set
@@ -192,41 +192,36 @@ namespace Novacode
                     instrText.Value = "HYPERLINK " + "\"" + value + "\"";
                 }
 
-                this.uri = value;
+                uri = value;
             } 
         }
 
         internal Hyperlink(DocX document, PackagePart mainPart, XElement i): base(document, i)
         {
-            this.type = 0;
-            this.id = i.Attribute(XName.Get("id", DocX.r.NamespaceName)).Value;
+            type = 0;
+            id = i.Attribute(XName.Get("id", DocX.r.NamespaceName)).Value;
 
             StringBuilder sb = new StringBuilder();
             HelperFunctions.GetTextRecursive(i, ref sb);
-            this.text = sb.ToString();
+            text = sb.ToString();
         }
 
         internal Hyperlink(DocX document, XElement instrText, List<XElement> runs) : base(document, null)
         {
-            this.type = 1;
+            type = 1;
             this.instrText = instrText;
             this.runs = runs;
 
-            try
+            int start = instrText.Value.IndexOf("HYPERLINK \"", StringComparison.Ordinal) + "HYPERLINK \"".Length;
+            int end = instrText.Value.IndexOf("\"", start, StringComparison.Ordinal);
+            if (start != -1 && end != -1)
             {
-                int start = instrText.Value.IndexOf("HYPERLINK \"") + "HYPERLINK \"".Length;
-                int end = instrText.Value.IndexOf("\"", start);
-                if (start != -1 && end != -1)
-                {
-                    this.uri = new Uri(instrText.Value.Substring(start, end - start), UriKind.Absolute);
+                uri = new Uri(instrText.Value.Substring(start, end - start), UriKind.Absolute);
 
-                    StringBuilder sb = new StringBuilder();
-                    HelperFunctions.GetTextRecursive(new XElement(XName.Get("temp", DocX.w.NamespaceName), runs), ref sb);
-                    this.text = sb.ToString();
-                }
+                StringBuilder sb = new StringBuilder();
+                HelperFunctions.GetTextRecursive(new XElement(XName.Get("temp", DocX.w.NamespaceName), runs), ref sb);
+                text = sb.ToString();
             }
-
-            catch (Exception e){throw e;}
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
-using System.IO.Packaging;
-using System.Collections.ObjectModel;
 
 namespace Novacode
 {
@@ -150,7 +150,7 @@ namespace Novacode
             get
             {
                 PackageRelationshipCollection imageRelationships = mainPart.GetRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/image");
-                if (imageRelationships.Count() > 0)
+                if (imageRelationships.Any())
                 {
                     return
                     (

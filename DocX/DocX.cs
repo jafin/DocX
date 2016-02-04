@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
@@ -8,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using System.Collections.ObjectModel;
+using Novacode.Charts;
 
 namespace Novacode
 {
@@ -37,11 +39,11 @@ namespace Novacode
 
         internal float getMarginAttribute(XName name)
         {
-            XElement body = mainDoc.Root.Element(XName.Get("body", DocX.w.NamespaceName));
-            XElement sectPr = body.Element(XName.Get("sectPr", DocX.w.NamespaceName));
+            XElement body = mainDoc.Root.Element(XName.Get("body", w.NamespaceName));
+            XElement sectPr = body.Element(XName.Get("sectPr", w.NamespaceName));
             if (sectPr != null)
             {
-                XElement pgMar = sectPr.Element(XName.Get("pgMar", DocX.w.NamespaceName));
+                XElement pgMar = sectPr.Element(XName.Get("pgMar", w.NamespaceName));
                 if (pgMar != null)
                 {
                     XAttribute top = pgMar.Attribute(name);
@@ -59,11 +61,11 @@ namespace Novacode
 
         internal void setMarginAttribute(XName xName, float value)
         {
-            XElement body = mainDoc.Root.Element(XName.Get("body", DocX.w.NamespaceName));
-            XElement sectPr = body.Element(XName.Get("sectPr", DocX.w.NamespaceName));
+            XElement body = mainDoc.Root.Element(XName.Get("body", w.NamespaceName));
+            XElement sectPr = body.Element(XName.Get("sectPr", w.NamespaceName));
             if (sectPr != null)
             {
-                XElement pgMar = sectPr.Element(XName.Get("pgMar", DocX.w.NamespaceName));
+                XElement pgMar = sectPr.Element(XName.Get("pgMar", w.NamespaceName));
                 if (pgMar != null)
                 {
                     XAttribute top = pgMar.Attribute(xName);
@@ -90,12 +92,12 @@ namespace Novacode
         {
             get
             {
-                return getMarginAttribute(XName.Get("top", DocX.w.NamespaceName));
+                return getMarginAttribute(XName.Get("top", w.NamespaceName));
             }
 
             set
             {
-                setMarginAttribute(XName.Get("top", DocX.w.NamespaceName), value);
+                setMarginAttribute(XName.Get("top", w.NamespaceName), value);
             }
         }
 
@@ -103,12 +105,12 @@ namespace Novacode
         {
             get
             {
-                return getMarginAttribute(XName.Get("bottom", DocX.w.NamespaceName));
+                return getMarginAttribute(XName.Get("bottom", w.NamespaceName));
             }
 
             set
             {
-                setMarginAttribute(XName.Get("bottom", DocX.w.NamespaceName), value);
+                setMarginAttribute(XName.Get("bottom", w.NamespaceName), value);
             }
         }
 
@@ -116,12 +118,12 @@ namespace Novacode
         {
             get
             {
-                return getMarginAttribute(XName.Get("left", DocX.w.NamespaceName));
+                return getMarginAttribute(XName.Get("left", w.NamespaceName));
             }
 
             set
             {
-                setMarginAttribute(XName.Get("left", DocX.w.NamespaceName), value);
+                setMarginAttribute(XName.Get("left", w.NamespaceName), value);
             }
         }
 
@@ -129,12 +131,12 @@ namespace Novacode
         {
             get
             {
-                return getMarginAttribute(XName.Get("right", DocX.w.NamespaceName));
+                return getMarginAttribute(XName.Get("right", w.NamespaceName));
             }
 
             set
             {
-                setMarginAttribute(XName.Get("right", DocX.w.NamespaceName), value);
+                setMarginAttribute(XName.Get("right", w.NamespaceName), value);
             }
         }
 
@@ -142,19 +144,19 @@ namespace Novacode
         {
             get
             {
-                XElement body = mainDoc.Root.Element(XName.Get("body", DocX.w.NamespaceName));
-                XElement sectPr = body.Element(XName.Get("sectPr", DocX.w.NamespaceName));
+                XElement body = mainDoc.Root.Element(XName.Get("body", w.NamespaceName));
+                XElement sectPr = body.Element(XName.Get("sectPr", w.NamespaceName));
                 if (sectPr != null)
                 {
-                    XElement pgSz = sectPr.Element(XName.Get("pgSz", DocX.w.NamespaceName));
+                    XElement pgSz = sectPr.Element(XName.Get("pgSz", w.NamespaceName));
 
                     if (pgSz != null)
                     {
-                        XAttribute w = pgSz.Attribute(XName.Get("w", DocX.w.NamespaceName));
-                        if (w != null)
+                        XAttribute wAttr = pgSz.Attribute(XName.Get("w", w.NamespaceName));
+                        if (wAttr != null)
                         {
                             float f;
-                            if (float.TryParse(w.Value, out f))
+                            if (float.TryParse(wAttr.Value, out f))
                                 return (int)(f / 15.0f);
                         }
                     }
@@ -165,19 +167,19 @@ namespace Novacode
 
             set
             {
-                XElement body = mainDoc.Root.Element(XName.Get("body", DocX.w.NamespaceName));
+                XElement body = mainDoc.Root.Element(XName.Get("body", w.NamespaceName));
 
                 if (body != null)
                 {
-                    XElement sectPr = body.Element(XName.Get("sectPr", DocX.w.NamespaceName));
+                    XElement sectPr = body.Element(XName.Get("sectPr", w.NamespaceName));
 
                     if (sectPr != null)
                     {
-                        XElement pgSz = sectPr.Element(XName.Get("pgSz", DocX.w.NamespaceName));
+                        XElement pgSz = sectPr.Element(XName.Get("pgSz", w.NamespaceName));
 
                         if (pgSz != null)
                         {
-                            pgSz.SetAttributeValue(XName.Get("w", DocX.w.NamespaceName), value * 15);
+                            pgSz.SetAttributeValue(XName.Get("w", w.NamespaceName), value * 15);
                         }
                     }
                 }
@@ -188,19 +190,19 @@ namespace Novacode
         {
             get
             {
-                XElement body = mainDoc.Root.Element(XName.Get("body", DocX.w.NamespaceName));
-                XElement sectPr = body.Element(XName.Get("sectPr", DocX.w.NamespaceName));
+                XElement body = mainDoc.Root.Element(XName.Get("body", w.NamespaceName));
+                XElement sectPr = body.Element(XName.Get("sectPr", w.NamespaceName));
                 if (sectPr != null)
                 {
-                    XElement pgSz = sectPr.Element(XName.Get("pgSz", DocX.w.NamespaceName));
+                    XElement pgSz = sectPr.Element(XName.Get("pgSz", w.NamespaceName));
 
                     if (pgSz != null)
                     {
-                        XAttribute w = pgSz.Attribute(XName.Get("h", DocX.w.NamespaceName));
-                        if (w != null)
+                        XAttribute wAttr = pgSz.Attribute(XName.Get("h", w.NamespaceName));
+                        if (wAttr != null)
                         {
                             float f;
-                            if (float.TryParse(w.Value, out f))
+                            if (float.TryParse(wAttr.Value, out f))
                                 return (int)(f / 15.0f);
                         }
                     }
@@ -211,19 +213,19 @@ namespace Novacode
 
             set
             {
-                XElement body = mainDoc.Root.Element(XName.Get("body", DocX.w.NamespaceName));
+                XElement body = mainDoc.Root.Element(XName.Get("body", w.NamespaceName));
 
                 if (body != null)
                 {
-                    XElement sectPr = body.Element(XName.Get("sectPr", DocX.w.NamespaceName));
+                    XElement sectPr = body.Element(XName.Get("sectPr", w.NamespaceName));
 
                     if (sectPr != null)
                     {
-                        XElement pgSz = sectPr.Element(XName.Get("pgSz", DocX.w.NamespaceName));
+                        XElement pgSz = sectPr.Element(XName.Get("pgSz", w.NamespaceName));
 
                         if (pgSz != null)
                         {
-                            pgSz.SetAttributeValue(XName.Get("h", DocX.w.NamespaceName), value * 15);
+                            pgSz.SetAttributeValue(XName.Get("h", w.NamespaceName), value * 15);
                         }
                     }
                 }
@@ -254,7 +256,7 @@ namespace Novacode
         {
             get
             {
-                return settings.Descendants(XName.Get("documentProtection", DocX.w.NamespaceName)).Count() > 0;
+                return settings.Descendants(XName.Get("documentProtection", w.NamespaceName)).Any();
             }
         }
 
@@ -289,8 +291,8 @@ namespace Novacode
         {
             if (isProtected)
             {
-                XElement documentProtection = settings.Descendants(XName.Get("documentProtection", DocX.w.NamespaceName)).FirstOrDefault();
-                string edit_type = documentProtection.Attribute(XName.Get("edit", DocX.w.NamespaceName)).Value;
+                XElement documentProtection = settings.Descendants(XName.Get("documentProtection", w.NamespaceName)).FirstOrDefault();
+                string edit_type = documentProtection.Attribute(XName.Get("edit", w.NamespaceName)).Value;
                 return (EditRestrictions)Enum.Parse(typeof(EditRestrictions), edit_type);
             }
 
@@ -325,9 +327,9 @@ namespace Novacode
             if (er == EditRestrictions.none)
                 return;
 
-            XElement documentProtection = new XElement(XName.Get("documentProtection", DocX.w.NamespaceName));
-            documentProtection.Add(new XAttribute(XName.Get("edit", DocX.w.NamespaceName), er.ToString()));
-            documentProtection.Add(new XAttribute(XName.Get("enforcement", DocX.w.NamespaceName), "1"));
+            XElement documentProtection = new XElement(XName.Get("documentProtection", w.NamespaceName));
+            documentProtection.Add(new XAttribute(XName.Get("edit", w.NamespaceName), er.ToString()));
+            documentProtection.Add(new XAttribute(XName.Get("enforcement", w.NamespaceName), "1"));
 
             settings.Root.AddFirst(documentProtection);
         }
@@ -341,9 +343,9 @@ namespace Novacode
             if (er == EditRestrictions.none)
                 return;
 
-            XElement documentProtection = new XElement(XName.Get("documentProtection", DocX.w.NamespaceName));
-            documentProtection.Add(new XAttribute(XName.Get("edit", DocX.w.NamespaceName), er.ToString()));
-            documentProtection.Add(new XAttribute(XName.Get("enforcement", DocX.w.NamespaceName), "1"));
+            XElement documentProtection = new XElement(XName.Get("documentProtection", w.NamespaceName));
+            documentProtection.Add(new XAttribute(XName.Get("edit", w.NamespaceName), er.ToString()));
+            documentProtection.Add(new XAttribute(XName.Get("enforcement", w.NamespaceName), "1"));
 
             int[] InitialCodeArray = { 0xE1F0, 0x1D0F, 0xCC9C, 0x84C0, 0x110C, 0x0E10, 0xF1CE, 0x313E, 0x1872, 0xE139, 0xD40F, 0x84F9, 0x280C, 0xA96A, 0x4EC3 };
             int[,] EncryptionMatrix = new int[15, 7]
@@ -459,13 +461,13 @@ namespace Novacode
                 generatedKey = sha1.ComputeHash(generatedKey);
             }
 
-            documentProtection.Add(new XAttribute(XName.Get("cryptProviderType", DocX.w.NamespaceName), "rsaFull"));
-            documentProtection.Add(new XAttribute(XName.Get("cryptAlgorithmClass", DocX.w.NamespaceName), "hash"));
-            documentProtection.Add(new XAttribute(XName.Get("cryptAlgorithmType", DocX.w.NamespaceName), "typeAny"));
-            documentProtection.Add(new XAttribute(XName.Get("cryptAlgorithmSid", DocX.w.NamespaceName), "4"));          // SHA1
-            documentProtection.Add(new XAttribute(XName.Get("cryptSpinCount", DocX.w.NamespaceName), iterations.ToString()));
-            documentProtection.Add(new XAttribute(XName.Get("hash", DocX.w.NamespaceName), Convert.ToBase64String(generatedKey)));
-            documentProtection.Add(new XAttribute(XName.Get("salt", DocX.w.NamespaceName), Convert.ToBase64String(arrSalt)));
+            documentProtection.Add(new XAttribute(XName.Get("cryptProviderType", w.NamespaceName), "rsaFull"));
+            documentProtection.Add(new XAttribute(XName.Get("cryptAlgorithmClass", w.NamespaceName), "hash"));
+            documentProtection.Add(new XAttribute(XName.Get("cryptAlgorithmType", w.NamespaceName), "typeAny"));
+            documentProtection.Add(new XAttribute(XName.Get("cryptAlgorithmSid", w.NamespaceName), "4"));          // SHA1
+            documentProtection.Add(new XAttribute(XName.Get("cryptSpinCount", w.NamespaceName), iterations.ToString()));
+            documentProtection.Add(new XAttribute(XName.Get("hash", w.NamespaceName), Convert.ToBase64String(generatedKey)));
+            documentProtection.Add(new XAttribute(XName.Get("salt", w.NamespaceName), Convert.ToBase64String(arrSalt)));
 
             settings.Root.AddFirst(documentProtection);
         }
@@ -500,18 +502,18 @@ namespace Novacode
         public void RemoveProtection()
         {
             // Remove every node of type documentProtection.
-            settings.Descendants(XName.Get("documentProtection", DocX.w.NamespaceName)).Remove();
+            settings.Descendants(XName.Get("documentProtection", w.NamespaceName)).Remove();
         }
 
         public PageLayout PageLayout
         {
             get
             {
-                XElement sectPr = Xml.Element(XName.Get("sectPr", DocX.w.NamespaceName));
+                XElement sectPr = Xml.Element(XName.Get("sectPr", w.NamespaceName));
                 if (sectPr == null)
                 {
-                    Xml.SetElementValue(XName.Get("sectPr", DocX.w.NamespaceName), string.Empty);
-                    sectPr = Xml.Element(XName.Get("sectPr", DocX.w.NamespaceName));
+                    Xml.SetElementValue(XName.Get("sectPr", w.NamespaceName), string.Empty);
+                    sectPr = Xml.Element(XName.Get("sectPr", w.NamespaceName));
                 }
 
                 return new PageLayout(this, sectPr);
@@ -749,7 +751,7 @@ namespace Novacode
 
             string Id =
             (
-                from e in mainDoc.Descendants(XName.Get("body", DocX.w.NamespaceName)).Descendants()
+                from e in mainDoc.Descendants(XName.Get("body", w.NamespaceName)).Descendants()
                 where (e.Name.LocalName == reference) && (e.Attribute(w + "type").Value == type)
                 select e.Attribute(r + "id").Value
             ).LastOrDefault();
@@ -815,8 +817,8 @@ namespace Novacode
 
             }
 
-            XElement body = mainDoc.Root.Element(XName.Get("body", DocX.w.NamespaceName));
-            XElement baseSectionXml = body.Element(XName.Get("sectPr", DocX.w.NamespaceName));
+            XElement body = mainDoc.Root.Element(XName.Get("body", w.NamespaceName));
+            XElement baseSectionXml = body.Element(XName.Get("sectPr", w.NamespaceName));
             var baseSection = new Section(Document, baseSectionXml) { SectionParagraphs = parasInASection };
             sections.Add(baseSection);
 
@@ -1098,11 +1100,10 @@ namespace Novacode
                             case "delText":
                                 sb.Append(descendant.Value);
                                 break;
-                            default: break;
                         }
                     }
 
-                    text += "\n" + sb.ToString();
+                    text += "\n" + sb;
                 }
             }
 
@@ -1148,11 +1149,11 @@ namespace Novacode
                 remote_endnotes = new XDocument(remote_document.endnotes);
 
             // Remove all header and footer references.
-            remote_mainDoc.Descendants(XName.Get("headerReference", DocX.w.NamespaceName)).Remove();
-            remote_mainDoc.Descendants(XName.Get("footerReference", DocX.w.NamespaceName)).Remove();
+            remote_mainDoc.Descendants(XName.Get("headerReference", w.NamespaceName)).Remove();
+            remote_mainDoc.Descendants(XName.Get("footerReference", w.NamespaceName)).Remove();
 
             // Get the body of the remote document.
-            XElement remote_body = remote_mainDoc.Root.Element(XName.Get("body", DocX.w.NamespaceName));
+            XElement remote_body = remote_mainDoc.Root.Element(XName.Get("body", w.NamespaceName));
 
             // Every file that is missing from the local document will have to be copied, every file that already exists will have to be merged.
             PackagePartCollection ppc = remote_document.package.GetParts();
@@ -1164,7 +1165,7 @@ namespace Novacode
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml",
                 "application/vnd.openxmlformats-package.core-properties+xml",
                 "application/vnd.openxmlformats-officedocument.extended-properties+xml",
-                "application/vnd.openxmlformats-package.relationships+xml",
+                "application/vnd.openxmlformats-package.relationships+xml"
             };
 
             List<String> imageContentTypes = new List<string>
@@ -1223,9 +1224,6 @@ namespace Novacode
                         case "application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml":
                             merge_numbering(remote_pp, local_pp, remote_mainDoc, remote_document);
                             break;
-
-                        default:
-                            break;
                     }
                 }
 
@@ -1282,10 +1280,10 @@ namespace Novacode
             {
                 var old_rel_Id = hyperlink_rel.Id;
                 var new_rel_Id = mainPart.CreateRelationship(hyperlink_rel.TargetUri, hyperlink_rel.TargetMode, hyperlink_rel.RelationshipType).Id;
-                var hyperlink_refs = remote_mainDoc.Descendants(XName.Get("hyperlink", DocX.w.NamespaceName));
+                var hyperlink_refs = remote_mainDoc.Descendants(XName.Get("hyperlink", w.NamespaceName));
                 foreach (var hyperlink_ref in hyperlink_refs)
                 {
-                    XAttribute a0 = hyperlink_ref.Attribute(XName.Get("id", DocX.r.NamespaceName));
+                    XAttribute a0 = hyperlink_ref.Attribute(XName.Get("id", r.NamespaceName));
                     if (a0 != null && a0.Value == old_rel_Id)
                     {
                         a0.SetValue(new_rel_Id);
@@ -1301,7 +1299,7 @@ namespace Novacode
                 var oleObject_refs = remote_mainDoc.Descendants(XName.Get("OLEObject", "urn:schemas-microsoft-com:office:office"));
                 foreach (var oleObject_ref in oleObject_refs)
                 {
-                    XAttribute a0 = oleObject_ref.Attribute(XName.Get("id", DocX.r.NamespaceName));
+                    XAttribute a0 = oleObject_ref.Attribute(XName.Get("id", r.NamespaceName));
                     if (a0 != null && a0.Value == old_rel_Id)
                     {
                         a0.SetValue(new_rel_Id);
@@ -1319,7 +1317,7 @@ namespace Novacode
             }
 
             int id = 0;
-            var local_docPrs = mainDoc.Root.Descendants(XName.Get("docPr", DocX.wp.NamespaceName));
+            var local_docPrs = mainDoc.Root.Descendants(XName.Get("docPr", wp.NamespaceName));
             foreach (var local_docPr in local_docPrs)
             {
                 XAttribute a_id = local_docPr.Attribute(XName.Get("id"));
@@ -1331,7 +1329,7 @@ namespace Novacode
             id++;
 
             // docPr must be sequential
-            var docPrs = remote_body.Descendants(XName.Get("docPr", DocX.wp.NamespaceName));
+            var docPrs = remote_body.Descendants(XName.Get("docPr", wp.NamespaceName));
             foreach (var docPr in docPrs)
             {
                 docPr.SetAttributeValue(XName.Get("id"), id);
@@ -1339,7 +1337,7 @@ namespace Novacode
             }
 
             // Add the remote documents contents to this document.
-            XElement local_body = mainDoc.Root.Element(XName.Get("body", DocX.w.NamespaceName));
+            XElement local_body = mainDoc.Root.Element(XName.Get("body", w.NamespaceName));
             local_body.Add(remote_body.Elements());
 
             // Copy any missing root attributes to the local document.
@@ -1387,10 +1385,10 @@ namespace Novacode
                         String new_Id = local_rel.Id;
 
                         // Replace all instances of remote_Id in the local document with local_Id
-                        var elems = remote_mainDoc.Descendants(XName.Get("blip", DocX.a.NamespaceName));
+                        var elems = remote_mainDoc.Descendants(XName.Get("blip", a.NamespaceName));
                         foreach (var elem in elems)
                         {
-                            XAttribute embed = elem.Attribute(XName.Get("embed", DocX.r.NamespaceName));
+                            XAttribute embed = elem.Attribute(XName.Get("embed", r.NamespaceName));
                             if (embed != null && embed.Value == remote_Id)
                             {
                                 embed.SetValue(new_Id);
@@ -1398,10 +1396,10 @@ namespace Novacode
                         }
 
                         // Replace all instances of remote_Id in the local document with local_Id (for shapes as well)
-                        var v_elems = remote_mainDoc.Descendants(XName.Get("imagedata", DocX.v.NamespaceName));
+                        var v_elems = remote_mainDoc.Descendants(XName.Get("imagedata", v.NamespaceName));
                         foreach (var elem in v_elems)
                         {
-                            XAttribute id = elem.Attribute(XName.Get("id", DocX.r.NamespaceName));
+                            XAttribute id = elem.Attribute(XName.Get("id", r.NamespaceName));
                             if (id != null && id.Value == remote_Id)
                             {
                                 id.SetValue(new_Id);
@@ -1417,9 +1415,9 @@ namespace Novacode
             if (!found)
             {
                 String new_uri = remote_pp.Uri.OriginalString;
-                new_uri = new_uri.Remove(new_uri.LastIndexOf("/"));
+                new_uri = new_uri.Remove(new_uri.LastIndexOf("/", StringComparison.Ordinal));
                 //new_uri = new_uri.Replace("word/", "");
-                new_uri += "/" + Guid.NewGuid().ToString() + contentType.Replace("image/", ".");
+                new_uri += "/" + Guid.NewGuid() + contentType.Replace("image/", ".");
                 if (!new_uri.StartsWith("/"))
                     new_uri = "/" + new_uri;
 
@@ -1446,10 +1444,10 @@ namespace Novacode
                 Match defRelId = Regex.Match(remote_Id, @"rId\d+", RegexOptions.IgnoreCase);
 
                 // Replace all instances of remote_Id in the local document with local_Id
-                var elems = remote_mainDoc.Descendants(XName.Get("blip", DocX.a.NamespaceName));
+                var elems = remote_mainDoc.Descendants(XName.Get("blip", a.NamespaceName));
                 foreach (var elem in elems)
                 {
-                    XAttribute embed = elem.Attribute(XName.Get("embed", DocX.r.NamespaceName));
+                    XAttribute embed = elem.Attribute(XName.Get("embed", r.NamespaceName));
                     if (embed != null && embed.Value == remote_Id)
                     {
                         embed.SetValue(new_Id);
@@ -1459,10 +1457,10 @@ namespace Novacode
                 if (!defRelId.Success)
 				{
 	               	// Replace all instances of remote_Id in the local document with local_Id
-	                var elems_local = mainDoc.Descendants(XName.Get("blip", DocX.a.NamespaceName));
+	                var elems_local = mainDoc.Descendants(XName.Get("blip", a.NamespaceName));
 	                foreach (var elem in elems_local)
 	                {
-	                    XAttribute embed = elem.Attribute(XName.Get("embed", DocX.r.NamespaceName));
+	                    XAttribute embed = elem.Attribute(XName.Get("embed", r.NamespaceName));
 	                    if (embed != null && embed.Value == remote_Id)
 	                    {
 	                        embed.SetValue(new_Id);
@@ -1471,10 +1469,10 @@ namespace Novacode
 					
 	                                
 	                // Replace all instances of remote_Id in the local document with local_Id
-	                var v_elems_local = mainDoc.Descendants(XName.Get("imagedata", DocX.v.NamespaceName));
+	                var v_elems_local = mainDoc.Descendants(XName.Get("imagedata", v.NamespaceName));
 	                foreach (var elem in v_elems_local)
 	                {
-	                    XAttribute id = elem.Attribute(XName.Get("id", DocX.r.NamespaceName));
+	                    XAttribute id = elem.Attribute(XName.Get("id", r.NamespaceName));
 	                    if (id != null && id.Value == remote_Id)
 	                    {
 	                        id.SetValue(new_Id);
@@ -1484,10 +1482,10 @@ namespace Novacode
 
 
                 // Replace all instances of remote_Id in the local document with local_Id (for shapes as well)
-                var v_elems = remote_mainDoc.Descendants(XName.Get("imagedata", DocX.v.NamespaceName));
+                var v_elems = remote_mainDoc.Descendants(XName.Get("imagedata", v.NamespaceName));
                 foreach (var elem in v_elems)
                 {
-                    XAttribute id = elem.Attribute(XName.Get("id", DocX.r.NamespaceName));
+                    XAttribute id = elem.Attribute(XName.Get("id", r.NamespaceName));
                     if (id != null && id.Value == remote_Id)
                     {
                         id.SetValue(new_Id);
@@ -1512,15 +1510,15 @@ namespace Novacode
             (
                 from d in endnotes.Root.Descendants()
                 where d.Name.LocalName == "endnote"
-                select int.Parse(d.Attribute(XName.Get("id", DocX.w.NamespaceName)).Value)
+                select int.Parse(d.Attribute(XName.Get("id", w.NamespaceName)).Value)
             );
 
             int max_id = ids.Max() + 1;
-            var endnoteReferences = remote_mainDoc.Descendants(XName.Get("endnoteReference", DocX.w.NamespaceName));
+            var endnoteReferences = remote_mainDoc.Descendants(XName.Get("endnoteReference", w.NamespaceName));
 
-            foreach (var endnote in remote_endnotes.Root.Elements().OrderBy(fr => fr.Attribute(XName.Get("id", DocX.r.NamespaceName))).Reverse())
+            foreach (var endnote in remote_endnotes.Root.Elements().OrderBy(fr => fr.Attribute(XName.Get("id", r.NamespaceName))).Reverse())
             {
-                XAttribute id = endnote.Attribute(XName.Get("id", DocX.w.NamespaceName));
+                XAttribute id = endnote.Attribute(XName.Get("id", w.NamespaceName));
                 int i;
                 if (id != null && int.TryParse(id.Value, out i))
                 {
@@ -1528,7 +1526,7 @@ namespace Novacode
                     {
                         foreach (var endnoteRef in endnoteReferences)
                         {
-                            XAttribute a = endnoteRef.Attribute(XName.Get("id", DocX.w.NamespaceName));
+                            XAttribute a = endnoteRef.Attribute(XName.Get("id", w.NamespaceName));
                             if (a != null && int.Parse(a.Value).Equals(i))
                             {
                                 a.SetValue(max_id);
@@ -1536,7 +1534,7 @@ namespace Novacode
                         }
 
                         // We care about copying this footnote.
-                        endnote.SetAttributeValue(XName.Get("id", DocX.w.NamespaceName), max_id);
+                        endnote.SetAttributeValue(XName.Get("id", w.NamespaceName), max_id);
                         endnotes.Root.Add(endnote);
                         max_id++;
                     }
@@ -1550,15 +1548,15 @@ namespace Novacode
             (
                 from d in footnotes.Root.Descendants()
                 where d.Name.LocalName == "footnote"
-                select int.Parse(d.Attribute(XName.Get("id", DocX.w.NamespaceName)).Value)
+                select int.Parse(d.Attribute(XName.Get("id", w.NamespaceName)).Value)
             );
 
             int max_id = ids.Max() + 1;
-            var footnoteReferences = remote_mainDoc.Descendants(XName.Get("footnoteReference", DocX.w.NamespaceName));
+            var footnoteReferences = remote_mainDoc.Descendants(XName.Get("footnoteReference", w.NamespaceName));
 
-            foreach (var footnote in remote_footnotes.Root.Elements().OrderBy(fr => fr.Attribute(XName.Get("id", DocX.r.NamespaceName))).Reverse())
+            foreach (var footnote in remote_footnotes.Root.Elements().OrderBy(fr => fr.Attribute(XName.Get("id", r.NamespaceName))).Reverse())
             {
-                XAttribute id = footnote.Attribute(XName.Get("id", DocX.w.NamespaceName));
+                XAttribute id = footnote.Attribute(XName.Get("id", w.NamespaceName));
                 int i;
                 if (id != null && int.TryParse(id.Value, out i))
                 {
@@ -1566,7 +1564,7 @@ namespace Novacode
                     {
                         foreach (var footnoteRef in footnoteReferences)
                         {
-                            XAttribute a = footnoteRef.Attribute(XName.Get("id", DocX.w.NamespaceName));
+                            XAttribute a = footnoteRef.Attribute(XName.Get("id", w.NamespaceName));
                             if (a != null && int.Parse(a.Value).Equals(i))
                             {
                                 a.SetValue(max_id);
@@ -1574,7 +1572,7 @@ namespace Novacode
                         }
 
                         // We care about copying this footnote.
-                        footnote.SetAttributeValue(XName.Get("id", DocX.w.NamespaceName), max_id);
+                        footnote.SetAttributeValue(XName.Get("id", w.NamespaceName), max_id);
                         footnotes.Root.Add(footnote);
                         max_id++;
                     }
@@ -1632,11 +1630,11 @@ namespace Novacode
         private void merge_numbering(PackagePart remote_pp, PackagePart local_pp, XDocument remote_mainDoc, DocX remote)
         {
             // Add each remote numbering to this document.
-            IEnumerable<XElement> remote_abstractNums = remote.numbering.Root.Elements(XName.Get("abstractNum", DocX.w.NamespaceName));
+            IEnumerable<XElement> remote_abstractNums = remote.numbering.Root.Elements(XName.Get("abstractNum", w.NamespaceName));
             int guidd = 0;
             foreach (var an in remote_abstractNums)
             {
-                XAttribute a = an.Attribute(XName.Get("abstractNumId", DocX.w.NamespaceName));
+                XAttribute a = an.Attribute(XName.Get("abstractNumId", w.NamespaceName));
                 if (a != null)
                 {
                     int i;
@@ -1649,11 +1647,11 @@ namespace Novacode
             }
             guidd++;
 
-            IEnumerable<XElement> remote_nums = remote.numbering.Root.Elements(XName.Get("num", DocX.w.NamespaceName));
+            IEnumerable<XElement> remote_nums = remote.numbering.Root.Elements(XName.Get("num", w.NamespaceName));
             int guidd2 = 0;
             foreach (var an in remote_nums)
             {
-                XAttribute a = an.Attribute(XName.Get("numId", DocX.w.NamespaceName));
+                XAttribute a = an.Attribute(XName.Get("numId", w.NamespaceName));
                 if (a != null)
                 {
                     int i;
@@ -1668,7 +1666,7 @@ namespace Novacode
 
             foreach (XElement remote_abstractNum in remote_abstractNums)
             {
-                XAttribute abstractNumId = remote_abstractNum.Attribute(XName.Get("abstractNumId", DocX.w.NamespaceName));
+                XAttribute abstractNumId = remote_abstractNum.Attribute(XName.Get("abstractNumId", w.NamespaceName));
                 if (abstractNumId != null)
                 {
                     String abstractNumIdValue = abstractNumId.Value;
@@ -1676,22 +1674,22 @@ namespace Novacode
 
                     foreach (XElement remote_num in remote_nums)
                     {
-                        var numIds = remote_mainDoc.Descendants(XName.Get("numId", DocX.w.NamespaceName));
+                        var numIds = remote_mainDoc.Descendants(XName.Get("numId", w.NamespaceName));
                         foreach (var numId in numIds)
                         {
-                            XAttribute attr = numId.Attribute(XName.Get("val", DocX.w.NamespaceName));
-                            if (attr != null && attr.Value.Equals(remote_num.Attribute(XName.Get("numId", DocX.w.NamespaceName)).Value))
+                            XAttribute attr = numId.Attribute(XName.Get("val", w.NamespaceName));
+                            if (attr != null && attr.Value.Equals(remote_num.Attribute(XName.Get("numId", w.NamespaceName)).Value))
                             {
                                 attr.SetValue(guidd2);
                             }
 
                         }
-                        remote_num.SetAttributeValue(XName.Get("numId", DocX.w.NamespaceName), guidd2);
+                        remote_num.SetAttributeValue(XName.Get("numId", w.NamespaceName), guidd2);
 
-                        XElement e = remote_num.Element(XName.Get("abstractNumId", DocX.w.NamespaceName));
+                        XElement e = remote_num.Element(XName.Get("abstractNumId", w.NamespaceName));
                         if (e != null)
                         {
-                            XAttribute a2 = e.Attribute(XName.Get("val", DocX.w.NamespaceName));
+                            XAttribute a2 = e.Attribute(XName.Get("val", w.NamespaceName));
                             if (a2 != null && a2.Value.Equals(abstractNumIdValue))
                                 a2.SetValue(guidd);
                         }
@@ -1704,25 +1702,25 @@ namespace Novacode
             }
 
             // Checking whether there were more than 0 elements, helped me get rid of exceptions thrown while using InsertDocument
-            if (numbering.Root.Elements(XName.Get("abstractNum", DocX.w.NamespaceName)).Count() > 0)
-            	numbering.Root.Elements(XName.Get("abstractNum", DocX.w.NamespaceName)).Last().AddAfterSelf(remote_abstractNums);
+            if (numbering.Root.Elements(XName.Get("abstractNum", w.NamespaceName)).Count() > 0)
+            	numbering.Root.Elements(XName.Get("abstractNum", w.NamespaceName)).Last().AddAfterSelf(remote_abstractNums);
             
-            if (numbering.Root.Elements(XName.Get("num", DocX.w.NamespaceName)).Count() > 0)
-            	numbering.Root.Elements(XName.Get("num", DocX.w.NamespaceName)).Last().AddAfterSelf(remote_nums);
+            if (numbering.Root.Elements(XName.Get("num", w.NamespaceName)).Count() > 0)
+            	numbering.Root.Elements(XName.Get("num", w.NamespaceName)).Last().AddAfterSelf(remote_nums);
         }
 
         private void merge_fonts(PackagePart remote_pp, PackagePart local_pp, XDocument remote_mainDoc, DocX remote)
         {
             // Add each remote font to this document.
-            IEnumerable<XElement> remote_fonts = remote.fontTable.Root.Elements(XName.Get("font", DocX.w.NamespaceName));
-            IEnumerable<XElement> local_fonts = fontTable.Root.Elements(XName.Get("font", DocX.w.NamespaceName));
+            IEnumerable<XElement> remote_fonts = remote.fontTable.Root.Elements(XName.Get("font", w.NamespaceName));
+            IEnumerable<XElement> local_fonts = fontTable.Root.Elements(XName.Get("font", w.NamespaceName));
 
             foreach (XElement remote_font in remote_fonts)
             {
                 bool flag_addFont = true;
                 foreach (XElement local_font in local_fonts)
                 {
-                    if (local_font.Attribute(XName.Get("name", DocX.w.NamespaceName)).Value == remote_font.Attribute(XName.Get("name", DocX.w.NamespaceName)).Value)
+                    if (local_font.Attribute(XName.Get("name", w.NamespaceName)).Value == remote_font.Attribute(XName.Get("name", w.NamespaceName)).Value)
                     {
                         flag_addFont = false;
                         break;
@@ -1739,10 +1737,10 @@ namespace Novacode
         private void merge_styles(PackagePart remote_pp, PackagePart local_pp, XDocument remote_mainDoc, DocX remote, XDocument remote_footnotes, XDocument remote_endnotes)
         {
             Dictionary<String, String> local_styles = new Dictionary<string, string>();
-            foreach (XElement local_style in styles.Root.Elements(XName.Get("style", DocX.w.NamespaceName)))
+            foreach (XElement local_style in styles.Root.Elements(XName.Get("style", w.NamespaceName)))
             {
                 XElement temp = new XElement(local_style);
-                XAttribute styleId = temp.Attribute(XName.Get("styleId", DocX.w.NamespaceName));
+                XAttribute styleId = temp.Attribute(XName.Get("styleId", w.NamespaceName));
                 String value = styleId.Value;
                 styleId.Remove();
                 String key = Regex.Replace(temp.ToString(), @"\s+", "");
@@ -1750,11 +1748,11 @@ namespace Novacode
             }
 
             // Add each remote style to this document.
-            IEnumerable<XElement> remote_styles = remote.styles.Root.Elements(XName.Get("style", DocX.w.NamespaceName));
+            IEnumerable<XElement> remote_styles = remote.styles.Root.Elements(XName.Get("style", w.NamespaceName));
             foreach (XElement remote_style in remote_styles)
             {
                 XElement temp = new XElement(remote_style);
-                XAttribute styleId = temp.Attribute(XName.Get("styleId", DocX.w.NamespaceName));
+                XAttribute styleId = temp.Attribute(XName.Get("styleId", w.NamespaceName));
                 String value = styleId.Value;
                 styleId.Remove();
                 String key = Regex.Replace(temp.ToString(), @"\s+", "");
@@ -1771,40 +1769,37 @@ namespace Novacode
                         continue;
 
                     // All we need to do is update the styleId.
-                    else
-                    {
-                        guuid = local_value;
-                    }
+                    guuid = local_value;
                 }
                 else
                 {
                     guuid = Guid.NewGuid().ToString();
                     // Set the styleId in the remote_style to this new Guid
                     // [Fixed the issue that my document referred to a new Guid while my styles still had the old value ("Titel")]
-                    remote_style.SetAttributeValue(XName.Get("styleId", DocX.w.NamespaceName), guuid);
+                    remote_style.SetAttributeValue(XName.Get("styleId", w.NamespaceName), guuid);
                 }
 
-                foreach (XElement e in remote_mainDoc.Root.Descendants(XName.Get("pStyle", DocX.w.NamespaceName)))
+                foreach (XElement e in remote_mainDoc.Root.Descendants(XName.Get("pStyle", w.NamespaceName)))
                 {
-                    XAttribute e_styleId = e.Attribute(XName.Get("val", DocX.w.NamespaceName));
+                    XAttribute e_styleId = e.Attribute(XName.Get("val", w.NamespaceName));
                     if (e_styleId != null && e_styleId.Value.Equals(styleId.Value))
                     {
                         e_styleId.SetValue(guuid);
                     }
                 }
 
-                foreach (XElement e in remote_mainDoc.Root.Descendants(XName.Get("rStyle", DocX.w.NamespaceName)))
+                foreach (XElement e in remote_mainDoc.Root.Descendants(XName.Get("rStyle", w.NamespaceName)))
                 {
-                    XAttribute e_styleId = e.Attribute(XName.Get("val", DocX.w.NamespaceName));
+                    XAttribute e_styleId = e.Attribute(XName.Get("val", w.NamespaceName));
                     if (e_styleId != null && e_styleId.Value.Equals(styleId.Value))
                     {
                         e_styleId.SetValue(guuid);
                     }
                 }
 
-                foreach (XElement e in remote_mainDoc.Root.Descendants(XName.Get("tblStyle", DocX.w.NamespaceName)))
+                foreach (XElement e in remote_mainDoc.Root.Descendants(XName.Get("tblStyle", w.NamespaceName)))
                 {
-                    XAttribute e_styleId = e.Attribute(XName.Get("val", DocX.w.NamespaceName));
+                    XAttribute e_styleId = e.Attribute(XName.Get("val", w.NamespaceName));
                     if (e_styleId != null && e_styleId.Value.Equals(styleId.Value))
                     {
                         e_styleId.SetValue(guuid);
@@ -1813,18 +1808,18 @@ namespace Novacode
 
                 if (remote_endnotes != null)
                 {
-                    foreach (XElement e in remote_endnotes.Root.Descendants(XName.Get("rStyle", DocX.w.NamespaceName)))
+                    foreach (XElement e in remote_endnotes.Root.Descendants(XName.Get("rStyle", w.NamespaceName)))
                     {
-                        XAttribute e_styleId = e.Attribute(XName.Get("val", DocX.w.NamespaceName));
+                        XAttribute e_styleId = e.Attribute(XName.Get("val", w.NamespaceName));
                         if (e_styleId != null && e_styleId.Value.Equals(styleId.Value))
                         {
                             e_styleId.SetValue(guuid);
                         }
                     }
 
-                    foreach (XElement e in remote_endnotes.Root.Descendants(XName.Get("pStyle", DocX.w.NamespaceName)))
+                    foreach (XElement e in remote_endnotes.Root.Descendants(XName.Get("pStyle", w.NamespaceName)))
                     {
-                        XAttribute e_styleId = e.Attribute(XName.Get("val", DocX.w.NamespaceName));
+                        XAttribute e_styleId = e.Attribute(XName.Get("val", w.NamespaceName));
                         if (e_styleId != null && e_styleId.Value.Equals(styleId.Value))
                         {
                             e_styleId.SetValue(guuid);
@@ -1834,18 +1829,18 @@ namespace Novacode
 
                 if (remote_footnotes != null)
                 {
-                    foreach (XElement e in remote_footnotes.Root.Descendants(XName.Get("rStyle", DocX.w.NamespaceName)))
+                    foreach (XElement e in remote_footnotes.Root.Descendants(XName.Get("rStyle", w.NamespaceName)))
                     {
-                        XAttribute e_styleId = e.Attribute(XName.Get("val", DocX.w.NamespaceName));
+                        XAttribute e_styleId = e.Attribute(XName.Get("val", w.NamespaceName));
                         if (e_styleId != null && e_styleId.Value.Equals(styleId.Value))
                         {
                             e_styleId.SetValue(guuid);
                         }
                     }
 
-                    foreach (XElement e in remote_footnotes.Root.Descendants(XName.Get("pStyle", DocX.w.NamespaceName)))
+                    foreach (XElement e in remote_footnotes.Root.Descendants(XName.Get("pStyle", w.NamespaceName)))
                     {
-                        XAttribute e_styleId = e.Attribute(XName.Get("val", DocX.w.NamespaceName));
+                        XAttribute e_styleId = e.Attribute(XName.Get("val", w.NamespaceName));
                         if (e_styleId != null && e_styleId.Value.Equals(styleId.Value))
                         {
                             e_styleId.SetValue(guuid);
@@ -1871,10 +1866,10 @@ namespace Novacode
                     String local_Id = mainPart.CreateRelationship(remote_rel.TargetUri, remote_rel.TargetMode, remote_rel.RelationshipType).Id;
 
                     // Replace all instances of remote_Id in the local document with local_Id
-                    var elems = remote_mainDoc.Descendants(XName.Get("blip", DocX.a.NamespaceName));
+                    var elems = remote_mainDoc.Descendants(XName.Get("blip", a.NamespaceName));
                     foreach (var elem in elems)
                     {
-                        XAttribute embed = elem.Attribute(XName.Get("embed", DocX.r.NamespaceName));
+                        XAttribute embed = elem.Attribute(XName.Get("embed", r.NamespaceName));
                         if (embed != null && embed.Value == remote_Id)
                         {
                             embed.SetValue(local_Id);
@@ -1882,10 +1877,10 @@ namespace Novacode
                     }
 
                      // Replace all instances of remote_Id in the local document with local_Id (for shapes as well)
-                    var v_elems = remote_mainDoc.Descendants(XName.Get("imagedata", DocX.v.NamespaceName));
+                    var v_elems = remote_mainDoc.Descendants(XName.Get("imagedata", v.NamespaceName));
                     foreach (var elem in v_elems)
                     {
-                        XAttribute id = elem.Attribute(XName.Get("id", DocX.r.NamespaceName));
+                        XAttribute id = elem.Attribute(XName.Get("id", r.NamespaceName));
                         if (id != null && id.Value == remote_Id)
                         {
                             id.SetValue(local_Id);
@@ -2041,7 +2036,7 @@ namespace Novacode
             base.InsertList(list);
             return list;
         }
-        public new List InsertList(List list, System.Drawing.FontFamily fontFamily, double fontSize)
+        public new List InsertList(List list, FontFamily fontFamily, double fontSize)
         {
             base.InsertList(list, fontFamily, fontSize);
             return list;
@@ -2304,7 +2299,7 @@ namespace Novacode
             Package package = Package.Open(ms, FileMode.Create, FileAccess.ReadWrite);
 
             PostCreation(package, documentType);
-            DocX document = DocX.Load(ms);
+            DocX document = Load(ms);
             document.stream = stream;
             return document;
         }
@@ -2350,7 +2345,7 @@ namespace Novacode
             Package package = Package.Open(ms, FileMode.Create, FileAccess.ReadWrite);
 
             PostCreation(package, documentType);
-            DocX document = DocX.Load(ms);
+            DocX document = Load(ms);
             document.filename = filename;
             return document;
         }
@@ -2440,15 +2435,19 @@ namespace Novacode
 
         private static void PopulateDocument(DocX document, Package package)
         {
-            Headers headers = new Headers();
-            headers.odd = document.GetHeaderByType("default");
-            headers.even = document.GetHeaderByType("even");
-            headers.first = document.GetHeaderByType("first");
+            Headers headers = new Headers
+            {
+                Odd = document.GetHeaderByType("default"),
+                Even = document.GetHeaderByType("even"),
+                First = document.GetHeaderByType("first")
+            };
 
-            Footers footers = new Footers();
-            footers.odd = document.GetFooterByType("default");
-            footers.even = document.GetFooterByType("even");
-            footers.first = document.GetFooterByType("first");
+            Footers footers = new Footers
+            {
+                Odd = document.GetFooterByType("default"),
+                Even = document.GetFooterByType("even"),
+                First = document.GetFooterByType("first")
+            };
 
             //// Get the sectPr for this document.
             //XElement sect = document.mainDoc.Descendants(XName.Get("sectPr", DocX.w.NamespaceName)).Single();
@@ -2548,9 +2547,6 @@ namespace Novacode
                         using (TextReader tr = new StreamReader(document.numberingPart.GetStream()))
                             document.numbering = XDocument.Load(tr);
                         break;
-
-                    default:
-                        break;
                 }
             }
         }
@@ -2571,7 +2567,7 @@ namespace Novacode
             SaveAs(ms);
             ms.Seek(0, SeekOrigin.Begin);
 
-            return DocX.Load(ms);
+            return Load(ms);
         }
 
         /// <summary>
@@ -2763,11 +2759,11 @@ namespace Novacode
                             }
                             break;
                         case "/_rels/.rels":
-                            if (!this.package.PartExists(packagePart.Uri))
+                            if (!package.PartExists(packagePart.Uri))
                             {
-                                this.package.CreatePart(packagePart.Uri, packagePart.ContentType, packagePart.CompressionOption);
+                                package.CreatePart(packagePart.Uri, packagePart.ContentType, packagePart.CompressionOption);
                             }
-                            PackagePart globalRelsPart = this.package.GetPart(packagePart.Uri);
+                            PackagePart globalRelsPart = package.GetPart(packagePart.Uri);
                             using (
                               StreamReader tr = new StreamReader(
                                 packagePart.GetStream(FileMode.Open, FileAccess.Read), Encoding.UTF8))
@@ -2783,16 +2779,16 @@ namespace Novacode
                         case "/word/_rels/document.xml.rels":
                             break;
                         default:
-                            if (!this.package.PartExists(packagePart.Uri))
+                            if (!package.PartExists(packagePart.Uri))
                             {
-                                this.package.CreatePart(packagePart.Uri, packagePart.ContentType, packagePart.CompressionOption);
+                                package.CreatePart(packagePart.Uri, packagePart.ContentType, packagePart.CompressionOption);
                             }
                             Encoding packagePartEncoding = Encoding.Default;
                             if (packagePart.Uri.ToString().EndsWith(".xml") || packagePart.Uri.ToString().EndsWith(".rels"))
                             {
                                 packagePartEncoding = Encoding.UTF8;
                             }
-                            PackagePart nativePart = this.package.GetPart(packagePart.Uri);
+                            PackagePart nativePart = package.GetPart(packagePart.Uri);
                             using (
                               StreamReader tr = new StreamReader(
                                 packagePart.GetStream(FileMode.Open, FileAccess.Read), packagePartEncoding))
@@ -2810,11 +2806,11 @@ namespace Novacode
                 if (documentPart != null)
                 {
                     string mainContentType = documentPart.ContentType.Replace("template.main", "document.main");
-                    if (this.package.PartExists(documentPart.Uri))
+                    if (package.PartExists(documentPart.Uri))
                     {
-                        this.package.DeletePart(documentPart.Uri);
+                        package.DeletePart(documentPart.Uri);
                     }
-                    PackagePart documentNewPart = this.package.CreatePart(
+                    PackagePart documentNewPart = package.CreatePart(
                       documentPart.Uri, mainContentType, documentPart.CompressionOption);
                     using (XmlWriter xw = XmlWriter.Create(documentNewPart.GetStream(FileMode.Create, FileAccess.Write)))
                     {
@@ -2828,8 +2824,8 @@ namespace Novacode
                           documentPartRel.RelationshipType,
                           documentPartRel.Id);
                     }
-                    this.mainPart = documentNewPart;
-                    this.mainDoc = documentDoc;
+                    mainPart = documentNewPart;
+                    mainDoc = documentDoc;
                     PopulateDocument(this, templatePackage);
 
                     // DragonFire: I added next line and recovered ApplyTemplate method. 
@@ -2840,7 +2836,7 @@ namespace Novacode
                 }
                 if (!includeContent)
                 {
-                    foreach (Paragraph paragraph in this.Paragraphs)
+                    foreach (Paragraph paragraph in Paragraphs)
                     {
                         paragraph.Remove(false);
                     }
@@ -2848,8 +2844,8 @@ namespace Novacode
             }
             finally
             {
-                this.package.Flush();
-                var documentRelsPart = this.package.GetPart(new Uri("/word/_rels/document.xml.rels", UriKind.Relative));
+                package.Flush();
+                var documentRelsPart = package.GetPart(new Uri("/word/_rels/document.xml.rels", UriKind.Relative));
                 using (TextReader tr = new StreamReader(documentRelsPart.GetStream(FileMode.Open, FileAccess.Read)))
                 {
                     tr.Read();
@@ -2897,7 +2893,7 @@ namespace Novacode
                 default: contentType = "image/jpg"; break;
             }
 
-            return AddImage(filename as object, contentType);
+            return AddImage(filename, contentType);
         }
 
         /// <summary>
@@ -2960,14 +2956,14 @@ namespace Novacode
         {
             XElement i = new XElement
             (
-                XName.Get("hyperlink", DocX.w.NamespaceName),
+                XName.Get("hyperlink", w.NamespaceName),
                 new XAttribute(r + "id", string.Empty),
                 new XAttribute(w + "history", "1"),
-                new XElement(XName.Get("r", DocX.w.NamespaceName),
-                new XElement(XName.Get("rPr", DocX.w.NamespaceName),
-                new XElement(XName.Get("rStyle", DocX.w.NamespaceName),
+                new XElement(XName.Get("r", w.NamespaceName),
+                new XElement(XName.Get("rPr", w.NamespaceName),
+                new XElement(XName.Get("rStyle", w.NamespaceName),
                 new XAttribute(w + "val", "Hyperlink"))),
-                new XElement(XName.Get("t", DocX.w.NamespaceName), text))
+                new XElement(XName.Get("t", w.NamespaceName), text))
             );
 
             Hyperlink h = new Hyperlink(this, mainPart, i);
@@ -3045,15 +3041,12 @@ namespace Novacode
             int result;
             if (int.TryParse(newId, out result))
                 return ("rId" + (result + 1));
-            else
+            String guid = String.Empty;
+            do
             {
-                String guid = String.Empty;
-                do
-                {
-                    guid = Guid.NewGuid().ToString();
-                } while (Char.IsDigit(guid[0]));
-                return guid;
-            }
+                guid = Guid.NewGuid().ToString();
+            } while (Char.IsDigit(guid[0]));
+            return guid;
         }
 
         /// <summary>
@@ -3094,9 +3087,9 @@ namespace Novacode
         {
             AddHeadersOrFooters(true);
 
-            headers.odd = Document.GetHeaderByType("default");
-            headers.even = Document.GetHeaderByType("even");
-            headers.first = Document.GetHeaderByType("first");
+            headers.Odd = Document.GetHeaderByType("default");
+            headers.Even = Document.GetHeaderByType("even");
+            headers.First = Document.GetHeaderByType("first");
         }
 
         /// <summary>
@@ -3137,9 +3130,9 @@ namespace Novacode
         {
             AddHeadersOrFooters(false);
 
-            footers.odd = Document.GetFooterByType("default");
-            footers.even = Document.GetFooterByType("even");
-            footers.first = Document.GetFooterByType("first");
+            footers.Odd = Document.GetFooterByType("default");
+            footers.Even = Document.GetFooterByType("even");
+            footers.First = Document.GetFooterByType("first");
         }
 
         /// <summary>
@@ -3236,7 +3229,7 @@ namespace Novacode
                     // Get all references to this Relationship in the document.
                     var query =
                     (
-                        from e in mainDoc.Descendants(XName.Get("body", DocX.w.NamespaceName)).Descendants()
+                        from e in mainDoc.Descendants(XName.Get("body", w.NamespaceName)).Descendants()
                         where (e.Name.LocalName == string.Format("{0}Reference", reference)) && (e.Attribute(r + "id").Value == header_relationship.Id)
                         select e
                     );
@@ -3326,15 +3319,15 @@ namespace Novacode
                 }
             }
 
-            string imgPartUriPath = string.Empty;
-            string extension = contentType.Substring(contentType.LastIndexOf("/") + 1);
+            string imgPartUriPath;
+            string extension = contentType.Substring(contentType.LastIndexOf("/", StringComparison.Ordinal) + 1);
             do
             {
                 // Create a new image part.
                 imgPartUriPath = string.Format
                 (
                     "/word/media/{0}.{1}",
-                    Guid.NewGuid().ToString(), // The unique part.
+                    Guid.NewGuid(), // The unique part.
                     extension
                 );
 
@@ -3413,7 +3406,7 @@ namespace Novacode
 
                 if (evenHeaderRef != null)
                 {
-                    XElement even = headers.even.Xml;
+                    XElement even = headers.Even.Xml;
 
                     Uri target = PackUriHelper.ResolvePartUri
                     (
@@ -3441,7 +3434,7 @@ namespace Novacode
 
                 if (oddHeaderRef != null)
                 {
-                    XElement odd = headers.odd.Xml;
+                    XElement odd = headers.Odd.Xml;
 
                     Uri target = PackUriHelper.ResolvePartUri
                     (
@@ -3470,7 +3463,7 @@ namespace Novacode
 
                 if (firstHeaderRef != null)
                 {
-                    XElement first = headers.first.Xml;
+                    XElement first = headers.First.Xml;
                     Uri target = PackUriHelper.ResolvePartUri
                     (
                         mainPart.Uri,
@@ -3498,7 +3491,7 @@ namespace Novacode
 
                 if (oddFooterRef != null)
                 {
-                    XElement odd = footers.odd.Xml;
+                    XElement odd = footers.Odd.Xml;
                     Uri target = PackUriHelper.ResolvePartUri
                     (
                         mainPart.Uri,
@@ -3526,7 +3519,7 @@ namespace Novacode
 
                 if (evenFooterRef != null)
                 {
-                    XElement even = footers.even.Xml;
+                    XElement even = footers.Even.Xml;
                     Uri target = PackUriHelper.ResolvePartUri
                     (
                         mainPart.Uri,
@@ -3554,7 +3547,7 @@ namespace Novacode
 
                 if (firstFooterRef != null)
                 {
-                    XElement first = footers.first.Xml;
+                    XElement first = footers.First.Xml;
                     Uri target = PackUriHelper.ResolvePartUri
                     (
                         mainPart.Uri,
@@ -3681,7 +3674,7 @@ namespace Novacode
         public void SaveAs(string filename)
         {
             this.filename = filename;
-            this.stream = null;
+            stream = null;
             Save();
         }
 
@@ -3739,7 +3732,7 @@ namespace Novacode
         /// <seealso cref="DocX.Load(string)"/>
         public void SaveAs(Stream stream)
         {
-            this.filename = null;
+            filename = null;
             this.stream = stream;
             Save();
         }
@@ -3781,8 +3774,8 @@ namespace Novacode
         /// <seealso cref="CustomProperties"/>
         public void AddCoreProperty(string propertyName, string propertyValue)
         {
-            string propertyNamespacePrefix = propertyName.Contains(":") ? propertyName.Split(new[] { ':' })[0] : "cp";
-            string propertyLocalName = propertyName.Contains(":") ? propertyName.Split(new[] { ':' })[1] : propertyName;
+            string propertyNamespacePrefix = propertyName.Contains(":") ? propertyName.Split(':')[0] : "cp";
+            string propertyLocalName = propertyName.Contains(":") ? propertyName.Split(':')[1] : propertyName;
 
             // If this document does not contain a coreFilePropertyPart create one.)
             if (!package.PartExists(new Uri("/docProps/core.xml", UriKind.Relative)))
@@ -4007,23 +4000,23 @@ namespace Novacode
             // Check if each header exists and add if if so.
             #region Headers
             Headers headers = document.Headers;
-            if (headers.first != null)
-                documents.Add(headers.first.Xml);
-            if (headers.odd != null)
-                documents.Add(headers.odd.Xml);
-            if (headers.even != null)
-                documents.Add(headers.even.Xml);
+            if (headers.First != null)
+                documents.Add(headers.First.Xml);
+            if (headers.Odd != null)
+                documents.Add(headers.Odd.Xml);
+            if (headers.Even != null)
+                documents.Add(headers.Even.Xml);
             #endregion
 
             // Check if each footer exists and add if if so.
             #region Footers
             Footers footers = document.Footers;
-            if (footers.first != null)
-                documents.Add(footers.first.Xml);
-            if (footers.odd != null)
-                documents.Add(footers.odd.Xml);
-            if (footers.even != null)
-                documents.Add(footers.even.Xml);
+            if (footers.First != null)
+                documents.Add(footers.First.Xml);
+            if (footers.Odd != null)
+                documents.Add(footers.Odd.Xml);
+            if (footers.Even != null)
+                documents.Add(footers.Even.Xml);
             #endregion
 
             // Process each document in the list.
@@ -4032,10 +4025,10 @@ namespace Novacode
                 #region Word 2010+
                 foreach (XElement e in doc.Descendants(XName.Get("instrText", w.NamespaceName)))
                 {
-                    string attr_value = e.Value.Replace(" ", string.Empty).Trim();
-                    string match_value = string.Format(@"DOCPROPERTY  {0}  \* MERGEFORMAT", customPropertyName).Replace(" ", string.Empty);
+                    string attrValue = e.Value.Replace(" ", string.Empty).Trim();
+                    string matchValue = string.Format(@"DOCPROPERTY  {0}  \* MERGEFORMAT", customPropertyName).Replace(" ", string.Empty);
 
-                    if (attr_value.Equals(match_value, StringComparison.CurrentCultureIgnoreCase))
+                    if (attrValue.Equals(matchValue, StringComparison.CurrentCultureIgnoreCase))
                     {
                         XNode node = e.Parent.NextNode;
                         bool found = false;
@@ -4045,7 +4038,7 @@ namespace Novacode
                             {
                                 var ele = node as XElement;
                                 var match = ele.Descendants(XName.Get("t", w.NamespaceName));
-                                if (match.Count() > 0)
+                                if (match.Any())
                                 {
                                     if (!found)
                                     {
@@ -4060,7 +4053,7 @@ namespace Novacode
                                 else
                                 {
                                     match = ele.Descendants(XName.Get("fldChar", w.NamespaceName));
-                                    if (match.Count() > 0)
+                                    if (match.Any())
                                     {
                                         var endMatch = match.First().Attribute(XName.Get("fldCharType", w.NamespaceName));
                                         if (endMatch != null && endMatch.Value == "end")
@@ -4244,22 +4237,22 @@ namespace Novacode
             // Insert a new chart into a paragraph.
             Paragraph p = InsertParagraph();
             XElement chartElement = new XElement(
-                XName.Get("r", DocX.w.NamespaceName),
+                XName.Get("r", w.NamespaceName),
                 new XElement(
-                    XName.Get("drawing", DocX.w.NamespaceName),
+                    XName.Get("drawing", w.NamespaceName),
                     new XElement(
-                        XName.Get("inline", DocX.wp.NamespaceName),
-                        new XElement(XName.Get("extent", DocX.wp.NamespaceName), new XAttribute("cx", "5486400"), new XAttribute("cy", "3200400")),
-                        new XElement(XName.Get("effectExtent", DocX.wp.NamespaceName), new XAttribute("l", "0"), new XAttribute("t", "0"), new XAttribute("r", "19050"), new XAttribute("b", "19050")),
-                        new XElement(XName.Get("docPr", DocX.wp.NamespaceName), new XAttribute("id", "1"), new XAttribute("name", "chart")),
+                        XName.Get("inline", wp.NamespaceName),
+                        new XElement(XName.Get("extent", wp.NamespaceName), new XAttribute("cx", "5486400"), new XAttribute("cy", "3200400")),
+                        new XElement(XName.Get("effectExtent", wp.NamespaceName), new XAttribute("l", "0"), new XAttribute("t", "0"), new XAttribute("r", "19050"), new XAttribute("b", "19050")),
+                        new XElement(XName.Get("docPr", wp.NamespaceName), new XAttribute("id", "1"), new XAttribute("name", "chart")),
                         new XElement(
-                            XName.Get("graphic", DocX.a.NamespaceName),
+                            XName.Get("graphic", a.NamespaceName),
                             new XElement(
-                                XName.Get("graphicData", DocX.a.NamespaceName),
-                                new XAttribute("uri", DocX.c.NamespaceName),
+                                XName.Get("graphicData", a.NamespaceName),
+                                new XAttribute("uri", c.NamespaceName),
                                 new XElement(
-                                    XName.Get("chart", DocX.c.NamespaceName),
-                                    new XAttribute(XName.Get("id", DocX.r.NamespaceName), relID)
+                                    XName.Get("chart", c.NamespaceName),
+                                    new XAttribute(XName.Get("id", r.NamespaceName), relID)
                                 )
                             )
                         )

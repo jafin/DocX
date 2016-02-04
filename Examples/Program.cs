@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Novacode;
+using Novacode.Charts;
 using Image = Novacode.Image;
 
 namespace Examples
@@ -79,18 +80,18 @@ namespace Examples
             public static List<ChartData> CreateCompanyList1()
             {
                 List<ChartData> company1 = new List<ChartData>();
-                company1.Add(new ChartData() { Mounth = "January", Money = 100 });
-                company1.Add(new ChartData() { Mounth = "February", Money = 120 });
-                company1.Add(new ChartData() { Mounth = "March", Money = 140 });
+                company1.Add(new ChartData { Mounth = "January", Money = 100 });
+                company1.Add(new ChartData { Mounth = "February", Money = 120 });
+                company1.Add(new ChartData { Mounth = "March", Money = 140 });
                 return company1;
             }
 
             public static List<ChartData> CreateCompanyList2()
             {
                 List<ChartData> company2 = new List<ChartData>();
-                company2.Add(new ChartData() { Mounth = "January", Money = 80 });
-                company2.Add(new ChartData() { Mounth = "February", Money = 160 });
-                company2.Add(new ChartData() { Mounth = "March", Money = 130 });
+                company2.Add(new ChartData { Mounth = "January", Money = 80 });
+                company2.Add(new ChartData { Mounth = "February", Money = 160 });
+                company2.Add(new ChartData { Mounth = "March", Money = 130 });
                 return company2;
             }
         }
@@ -536,15 +537,11 @@ namespace Examples
             {
 
               // Create a float var that contains doc Margins properties.
-                float leftMargin = document.MarginLeft;
-                float rightMargin = document.MarginRight;
-                float topMargin = document.MarginTop;
-                float bottomMargin = document.MarginBottom;
                 // Modify using your own vars.
-                leftMargin = 95F;
-                rightMargin = 45F;
-                topMargin = 50F;
-                bottomMargin = 180F;
+                var leftMargin = 95F;
+                var rightMargin = 45F;
+                var topMargin = 50F;
+                var bottomMargin = 180F;
 
                 // Or simply work the margins by setting the property directly. 
                 document.MarginLeft = leftMargin;
@@ -654,14 +651,14 @@ namespace Examples
                 document.DifferentOddAndEvenPages = true;
 
                 // Get the first, odd and even Headers for this document.
-                Header header_first = document.Headers.first;
-                Header header_odd = document.Headers.odd;
-                Header header_even = document.Headers.even;
+                Header header_first = document.Headers.First;
+                Header header_odd = document.Headers.Odd;
+                Header header_even = document.Headers.Even;
 
                 // Get the first, odd and even Footer for this document.
-                Footer footer_first = document.Footers.first;
-                Footer footer_odd = document.Footers.odd;
-                Footer footer_even = document.Footers.even;
+                Footer footer_first = document.Footers.First;
+                Footer footer_odd = document.Footers.Odd;
+                Footer footer_even = document.Footers.Even;
 
                 // Insert a Paragraph into the first Header.
                 Paragraph p0 = header_first.InsertParagraph();
@@ -748,14 +745,14 @@ namespace Examples
                 document.DifferentOddAndEvenPages = true;
 
                 // Get the first, odd and even Headers for this document.
-                Header header_first = document.Headers.first;
-                Header header_odd = document.Headers.odd;
-                Header header_even = document.Headers.even;
+                Header header_first = document.Headers.First;
+                Header header_odd = document.Headers.Odd;
+                Header header_even = document.Headers.Even;
 
                 // Get the first, odd and even Footer for this document.
-                Footer footer_first = document.Footers.first;
-                Footer footer_odd = document.Footers.odd;
-                Footer footer_even = document.Footers.even;
+                Footer footer_first = document.Footers.First;
+                Footer footer_odd = document.Footers.Odd;
+                Footer footer_even = document.Footers.Even;
 
                 // Insert a Paragraph into the first Header.
                 Paragraph p0 = header_first.InsertParagraph();
@@ -915,14 +912,14 @@ namespace Examples
                 document.DifferentOddAndEvenPages = true;
 
                 // Get the first, odd and even Headers for this document.
-                Header header_first = document.Headers.first;
-                Header header_odd = document.Headers.odd;
-                Header header_even = document.Headers.even;
+                Header header_first = document.Headers.First;
+                Header header_odd = document.Headers.Odd;
+                Header header_even = document.Headers.Even;
 
                 // Get the first, odd and even Footer for this document.
-                Footer footer_first = document.Footers.first;
-                Footer footer_odd = document.Footers.odd;
-                Footer footer_even = document.Footers.even;
+                Footer footer_first = document.Footers.First;
+                Footer footer_odd = document.Footers.Odd;
+                Footer footer_even = document.Footers.Even;
 
                 // Insert a Paragraph into the first Header.
                 Paragraph p0 = header_first.InsertParagraph();
@@ -1392,7 +1389,7 @@ namespace Examples
         private static DataTable GetDataFromDatabase()
         {
             DataTable table = new DataTable();
-            table.Columns.AddRange(new DataColumn[] { new DataColumn("Description"), new DataColumn("Hours"), new DataColumn("Rate"), new DataColumn("Amount") });
+            table.Columns.AddRange(new[] { new DataColumn("Description"), new DataColumn("Hours"), new DataColumn("Rate"), new DataColumn("Amount") });
 
             table.Rows.Add
             (
@@ -1737,9 +1734,9 @@ namespace Examples
                 {
                     var tbl = doc.InsertTable(1, 18);
 
-                    var wholeWidth = doc.PageWidth - doc.MarginLeft - doc.MarginRight;
-                    var colWidth = wholeWidth / tbl.ColumnCount;
-                    var colWidths = new int[tbl.ColumnCount];
+                    //var wholeWidth = doc.PageWidth - doc.MarginLeft - doc.MarginRight;
+                    //var colWidth = wholeWidth / tbl.ColumnCount;
+                    //var colWidths = new int[tbl.ColumnCount];
                     tbl.AutoFit = AutoFit.Contents;
                     var r = tbl.Rows[0];
                     var cx = 0;
@@ -1776,7 +1773,7 @@ namespace Examples
             {
                 using (var doc = DocX.Create(output))
                 {
-                    var widths = new float[] { 200f, 100f, 300f };
+                    var widths = new[] { 200f, 100f, 300f };
                     var tbl = doc.InsertTable(1, widths.Length);
                     tbl.SetWidths(widths);
                     var wholeWidth = doc.PageWidth - doc.MarginLeft - doc.MarginRight;

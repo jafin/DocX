@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace Novacode
+namespace Novacode.Charts
 {
     /// <summary>
     /// This element contains the 2-D line chart series.
@@ -20,7 +20,7 @@ namespace Novacode
             }
             set
             {
-                XElementHelpers.SetValueFromEnum<Grouping>(
+                XElementHelpers.SetValueFromEnum(
                     ChartXml.Element(XName.Get("grouping", DocX.c.NamespaceName)), value);
             }
         }

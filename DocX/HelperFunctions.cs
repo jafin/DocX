@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Security.Principal;
 using System.Text;
 using System.Xml.Linq;
-using System.Xml;
 
 namespace Novacode
 {
@@ -36,7 +35,7 @@ namespace Novacode
             foreach (XElement e in desired.Elements())
             {
                 // If a formatting property has the same name and 'val' attribute's value, its considered to be equivalent.
-                if (!toCheck.Elements(e.Name).Where(bElement => bElement.GetAttribute(XName.Get("val", DocX.w.NamespaceName)) == e.GetAttribute(XName.Get("val", DocX.w.NamespaceName))).Any())
+                if (toCheck.Elements(e.Name).All(bElement => bElement.GetAttribute(XName.Get("val", DocX.w.NamespaceName)) != e.GetAttribute(XName.Get("val", DocX.w.NamespaceName))))
                     return false;
             }
 
@@ -46,9 +45,9 @@ namespace Novacode
 
             return true;
         }
-        internal static void CreateRelsPackagePart(DocX Document, Uri uri)
+        internal static void CreateRelsPackagePart(DocX document, Uri uri)
         {
-            PackagePart pp = Document.package.CreatePart(uri, "application/vnd.openxmlformats-package.relationships+xml", CompressionOption.Maximum);
+            PackagePart pp = document.package.CreatePart(uri, "application/vnd.openxmlformats-package.relationships+xml", CompressionOption.Maximum);
             using (TextWriter tw = new StreamWriter(pp.GetStream()))
             {
                 XDocument d = new XDocument
@@ -56,14 +55,13 @@ namespace Novacode
                     new XDeclaration("1.0", "UTF-8", "yes"),
                     new XElement(XName.Get("Relationships", DocX.rel.NamespaceName))
                 );
-                var root = d.Root;
                 d.Save(tw);
             }
         }
 
-        internal static int GetSize(XElement Xml)
+        internal static int GetSize(XElement xml)
         {
-            switch (Xml.Name.LocalName)
+            switch (xml.Name.LocalName)
             {
                 case "tab":
                     return 1;
@@ -72,7 +70,7 @@ namespace Novacode
                 case "t":
                     goto case "delText";
                 case "delText":
-                    return Xml.Value.Length;
+                    return xml.Value.Length;
                 case "tr":
                     goto case "br";
                 case "tc":
@@ -89,12 +87,12 @@ namespace Novacode
             return sb.ToString();
         }
 
-        internal static void GetTextRecursive(XElement Xml, ref StringBuilder sb)
+        internal static void GetTextRecursive(XElement xml, ref StringBuilder sb)
         {
-            sb.Append(ToText(Xml));
+            sb.Append(ToText(xml));
 
-            if (Xml.HasElements)
-                foreach (XElement e in Xml.Elements())
+            if (xml.HasElements)
+                foreach (XElement e in xml.Elements())
                     GetTextRecursive(e, ref sb);
         }
 
@@ -105,36 +103,36 @@ namespace Novacode
             return alist;
         }
 
-        internal static void GetFormattedTextRecursive(XElement Xml, ref List<FormattedText> alist)
+        private static void GetFormattedTextRecursive(XElement xml, ref List<FormattedText> alist)
         {
-            FormattedText ft = ToFormattedText(Xml);
+            FormattedText ft = ToFormattedText(xml);
             FormattedText last = null;
 
             if (ft != null)
             {
-                if (alist.Count() > 0)
+                if (alist.Any())
                     last = alist.Last();
 
                 if (last != null && last.CompareTo(ft) == 0)
                 {
                     // Update text of last entry.
-                    last.text += ft.text;
+                    last.Text += ft.Text;
                 }
                 else
                 {
                     if (last != null)
-                        ft.index = last.index + last.text.Length;
+                        ft.Index = last.Index + last.Text.Length;
 
                     alist.Add(ft);
                 }
             }
 
-            if (Xml.HasElements)
-                foreach (XElement e in Xml.Elements())
+            if (xml.HasElements)
+                foreach (XElement e in xml.Elements())
                     GetFormattedTextRecursive(e, ref alist);
         }
 
-        internal static FormattedText ToFormattedText(XElement e)
+        private static FormattedText ToFormattedText(XElement e)
         {
             // The text representation of e.
             String text = ToText(e);
@@ -149,19 +147,16 @@ namespace Novacode
             // e is a w:r element, lets find the rPr element.
             XElement rPr = e.Element(XName.Get("rPr", DocX.w.NamespaceName));
 
-            FormattedText ft = new FormattedText();
-            ft.text = text;
-            ft.index = 0;
-            ft.formatting = null;
+            var ft = new FormattedText { Text = text, Index = 0, Formatting = null };
 
             // Return text with formatting.
             if (rPr != null)
-                ft.formatting = Formatting.Parse(rPr);
+                ft.Formatting = Formatting.Parse(rPr);
 
             return ft;
         }
 
-        internal static string ToText(XElement e)
+        private static string ToText(XElement e)
         {
             switch (e.Name.LocalName)
             {
@@ -336,11 +331,10 @@ namespace Novacode
         /// <returns></returns>
         internal static XDocument AddDefaultNumberingXml(Package package)
         {
-            XDocument numberingDoc;
             // Create the main document part for this package
             PackagePart wordNumbering = package.CreatePart(new Uri("/word/numbering.xml", UriKind.Relative), "application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml", CompressionOption.Maximum);
 
-            numberingDoc = DecompressXMLResource("Novacode.Resources.numbering.xml.gz");
+            var numberingDoc = DecompressXMLResource("Novacode.Resources.numbering.xml.gz");
 
             // Save /word/numbering.xml
             using (TextWriter tw = new StreamWriter(wordNumbering.GetStream(FileMode.Create, FileAccess.Write)))
@@ -362,11 +356,10 @@ namespace Novacode
         /// <returns></returns>
         internal static XDocument AddDefaultStylesXml(Package package)
         {
-            XDocument stylesDoc;
             // Create the main document part for this package
             PackagePart word_styles = package.CreatePart(new Uri("/word/styles.xml", UriKind.Relative), "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml", CompressionOption.Maximum);
 
-            stylesDoc = HelperFunctions.DecompressXMLResource("Novacode.Resources.default_styles.xml.gz");
+            var stylesDoc = DecompressXMLResource("Novacode.Resources.default_styles.xml.gz");
             XElement lang = stylesDoc.Root.Element(XName.Get("docDefaults", DocX.w.NamespaceName)).Element(XName.Get("rPrDefault", DocX.w.NamespaceName)).Element(XName.Get("rPr", DocX.w.NamespaceName)).Element(XName.Get("lang", DocX.w.NamespaceName));
             lang.SetAttributeValue(XName.Get("val", DocX.w.NamespaceName), CultureInfo.CurrentCulture);
 
@@ -374,24 +367,21 @@ namespace Novacode
             using (TextWriter tw = new StreamWriter(word_styles.GetStream(FileMode.Create, FileAccess.Write)))
                 stylesDoc.Save(tw, SaveOptions.None);
 
-            PackagePart mainDocumentPart = package.GetParts().Where
-            (
-                p => p.ContentType.Equals(DOCUMENT_DOCUMENTTYPE, StringComparison.CurrentCultureIgnoreCase)||p.ContentType.Equals(TEMPLATE_DOCUMENTTYPE, StringComparison.CurrentCultureIgnoreCase)
-            ).Single();
-
+            PackagePart mainDocumentPart = package.GetParts().Single(p => p.ContentType.Equals(DOCUMENT_DOCUMENTTYPE, StringComparison.CurrentCultureIgnoreCase)||p.ContentType.Equals(TEMPLATE_DOCUMENTTYPE, StringComparison.CurrentCultureIgnoreCase));
             mainDocumentPart.CreateRelationship(word_styles.Uri, TargetMode.Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles");
             return stylesDoc;
         }
 
-        internal static XElement CreateEdit(EditType t, DateTime edit_time, object content)
+        internal static XElement CreateEdit(EditType t, DateTime editTime, object content)
         {
             if (t == EditType.del)
             {
-                foreach (object o in (IEnumerable<XElement>)content)
+                foreach (XElement o in (IEnumerable<XElement>)content)
                 {
-                    if (o is XElement)
+                    var element = o;
+                    if (element != null)
                     {
-                        XElement e = (o as XElement);
+                        XElement e = element;
                         IEnumerable<XElement> ts = e.DescendantsAndSelf(XName.Get("t", DocX.w.NamespaceName));
 
                         for (int i = 0; i < ts.Count(); i++)
@@ -408,7 +398,7 @@ namespace Novacode
                 new XElement(DocX.w + t.ToString(),
                     new XAttribute(DocX.w + "id", 0),
                     new XAttribute(DocX.w + "author", WindowsIdentity.GetCurrent().Name),
-                    new XAttribute(DocX.w + "date", edit_time),
+                    new XAttribute(DocX.w + "date", editTime),
                 content)
             );
         }
@@ -423,7 +413,7 @@ namespace Novacode
 			return CreateTable(rowCount, columnWidths);
 		}
 
-		internal static XElement CreateTable(int rowCount, int[] columnWidths)
+        private static XElement CreateTable(int rowCount, int[] columnWidths)
         {
             XElement newTable =
             new XElement
@@ -438,13 +428,7 @@ namespace Novacode
                 )
             );
 
-            /*XElement tableGrid = new XElement(XName.Get("tblGrid", DocX.w.NamespaceName));
-            for (int i = 0; i < columnWidths.Length; i++)
-                tableGrid.Add(new XElement(XName.Get("gridCol", DocX.w.NamespaceName), new XAttribute(XName.Get("w", DocX.w.NamespaceName), XmlConvert.ToString(columnWidths[i]))));
-
-            newTable.Add(tableGrid);*/
-
-            for (int i = 0; i < rowCount; i++)
+        for (int i = 0; i < rowCount; i++)
             {
                 XElement row = new XElement(XName.Get("tr", DocX.w.NamespaceName));
 
@@ -525,7 +509,7 @@ namespace Novacode
         internal static Paragraph GetFirstParagraphEffectedByInsert(DocX document, int index)
         {
             // This document contains no Paragraphs and insertion is at index 0
-            if (document.paragraphLookup.Keys.Count() == 0 && index == 0)
+            if (!document.paragraphLookup.Keys.Any() && index == 0)
                 return null;
 
             foreach (int paragraphEndIndex in document.paragraphLookup.Keys)
@@ -558,7 +542,7 @@ namespace Novacode
                         if (sb.Length > 0)
                         {
                             XElement t = new XElement(DocX.w + "t", sb.ToString());
-                            Novacode.Text.PreserveSpace(t);
+                            Text.PreserveSpace(t);
                             newRuns.Add(new XElement(DocX.w + "r", rPr, t));
                             sb = new StringBuilder();
                         }
@@ -569,7 +553,7 @@ namespace Novacode
                         if (sb.Length > 0)
                         {
                             XElement t = new XElement(DocX.w + "t", sb.ToString());
-                            Novacode.Text.PreserveSpace(t);
+                            Text.PreserveSpace(t);
                             newRuns.Add(new XElement(DocX.w + "r", rPr, t));
                             sb = new StringBuilder();
                         }
@@ -585,7 +569,7 @@ namespace Novacode
             if (sb.Length > 0)
             {
                 XElement t = new XElement(DocX.w + "t", sb.ToString());
-                Novacode.Text.PreserveSpace(t);
+                Text.PreserveSpace(t);
                 newRuns.Add(new XElement(DocX.w + "r", rPr, t));
             }
 
@@ -595,7 +579,7 @@ namespace Novacode
         internal static XElement[] SplitParagraph(Paragraph p, int index)
         {
             // In this case edit dosent really matter, you have a choice.
-            Run r = p.GetFirstRunEffectedByEdit(index, EditType.ins);
+            Run r = p.GetFirstRunEffectedByEdit(index);
 
             XElement[] split;
             XElement before, after;
@@ -621,13 +605,13 @@ namespace Novacode
                 after = new XElement(p.Xml.Name, p.Xml.Attributes(), split[1], r.Xml.ElementsAfterSelf());
             }
 
-            if (before.Elements().Count() == 0)
+            if (!before.Elements().Any())
                 before = null;
 
-            if (after.Elements().Count() == 0)
+            if (!after.Elements().Any())
                 after = null;
 
-            return new XElement[] { before, after };
+            return new[] { before, after };
         }
 
         /// <!-- 
@@ -636,7 +620,7 @@ namespace Novacode
         /// -->
         internal static bool IsSameFile(Stream streamOne, Stream streamTwo)
         {
-            int file1byte, file2byte;
+            int file1Byte, file2Byte;
 
             if (streamOne.Length != streamOne.Length)
             {
@@ -650,10 +634,10 @@ namespace Novacode
             do
             {
                 // Read one byte from each file.
-                file1byte = streamOne.ReadByte();
-                file2byte = streamTwo.ReadByte();
+                file1Byte = streamOne.ReadByte();
+                file2Byte = streamTwo.ReadByte();
             }
-            while ((file1byte == file2byte) && (file1byte != -1));
+            while ((file1Byte == file2Byte) && (file1Byte != -1));
 
             // Return the success of the comparison. "file1byte" is 
             // equal to "file2byte" at this point only if the files are 
@@ -662,7 +646,7 @@ namespace Novacode
             streamOne.Position = 0;
             streamTwo.Position = 0;
 
-            return ((file1byte - file2byte) == 0);
+            return ((file1Byte - file2Byte) == 0);
         }
 
       internal static UnderlineStyle GetUnderlineStyle(string underlineStyle)

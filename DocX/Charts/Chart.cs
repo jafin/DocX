@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using System.Collections;
-using System.Drawing;
 
-namespace Novacode
+namespace Novacode.Charts
 {
     /// <summary>
     /// Represents every Chart in this document.
@@ -52,7 +53,7 @@ namespace Novacode
         {
             int serCount = ChartXml.Elements(XName.Get("ser", DocX.c.NamespaceName)).Count();
             if (serCount == MaxSeriesCount)
-                throw new InvalidOperationException("Maximum series for this chart is" + MaxSeriesCount.ToString() + "and have exceeded!");
+                throw new InvalidOperationException("Maximum series for this chart is" + MaxSeriesCount + "and have exceeded!");
             // Sourceman 16.04.2015 - Every Series needs to have an order and index element for being processed by Word 2013
             series.Xml.AddFirst(
                 new XElement(XName.Get("order", DocX.c.NamespaceName),
@@ -166,7 +167,7 @@ namespace Novacode
             }
             set
             {
-                XElementHelpers.SetValueFromEnum<DisplayBlanksAs>(
+                XElementHelpers.SetValueFromEnum(
                     ChartRootXml.Element(XName.Get("dispBlanksAs", DocX.c.NamespaceName)), value);
             }
         }
@@ -269,10 +270,9 @@ namespace Novacode
                 XElement colorElement = Xml.Element(XName.Get("spPr", DocX.c.NamespaceName));
                 if (colorElement == null)
                     return Color.Transparent;
-                else
-                    return Color.FromArgb(Int32.Parse(
-                        colorElement.Element(XName.Get("solidFill", DocX.a.NamespaceName)).Element(XName.Get("srgbClr", DocX.a.NamespaceName)).Attribute(XName.Get("val")).Value,
-                        System.Globalization.NumberStyles.HexNumber));
+                return Color.FromArgb(Int32.Parse(
+                    colorElement.Element(XName.Get("solidFill", DocX.a.NamespaceName)).Element(XName.Get("srgbClr", DocX.a.NamespaceName)).Attribute(XName.Get("val")).Value,
+                    NumberStyles.HexNumber));
             }
             set
             {
@@ -416,7 +416,7 @@ namespace Novacode
             }
             set
             {
-                XElementHelpers.SetValueFromEnum<ChartLegendPosition>(
+                XElementHelpers.SetValueFromEnum(
                     Xml.Element(XName.Get("legendPos", DocX.c.NamespaceName)), value);
             }
         }
@@ -425,7 +425,7 @@ namespace Novacode
         {
             Xml = new XElement(
                 XName.Get("legend", DocX.c.NamespaceName),
-                new XElement(XName.Get("legendPos", DocX.c.NamespaceName), new XAttribute("val", XElementHelpers.GetXmlNameFromEnum<ChartLegendPosition>(position))),
+                new XElement(XName.Get("legendPos", DocX.c.NamespaceName), new XAttribute("val", XElementHelpers.GetXmlNameFromEnum(position))),
                 new XElement(XName.Get("overlay", DocX.c.NamespaceName), new XAttribute("val", GetOverlayValue(overlay)))
                 );
         }
@@ -438,8 +438,7 @@ namespace Novacode
         {
             if (overlay)
                 return "1";
-            else
-                return "0";
+            return "0";
         }
     }
 

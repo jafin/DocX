@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace Novacode
+namespace Novacode.Charts
 {
     /// <summary>
     /// This element contains the 2-D bar or column series on this chart.
@@ -21,7 +21,7 @@ namespace Novacode
             }
             set
             {
-                XElementHelpers.SetValueFromEnum<BarDirection>(
+                XElementHelpers.SetValueFromEnum(
                     ChartXml.Element(XName.Get("barDir", DocX.c.NamespaceName)), value);
             }
         }
@@ -38,7 +38,7 @@ namespace Novacode
             }
             set
             {
-                XElementHelpers.SetValueFromEnum<BarGrouping>(
+                XElementHelpers.SetValueFromEnum(
                     ChartXml.Element(XName.Get("grouping", DocX.c.NamespaceName)), value);
             }
         }

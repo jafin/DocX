@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
-namespace Novacode
+namespace Novacode.Charts
 {
     internal static class XElementHelpers
     {
@@ -37,7 +37,7 @@ namespace Novacode
         {
             if (element == null)
                 throw new ArgumentNullException("element");
-            element.Attribute(XName.Get("val")).Value = GetXmlNameFromEnum<T>(value);
+            element.Attribute(XName.Get("val")).Value = GetXmlNameFromEnum(value);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Novacode
                 throw new ArgumentNullException("value");
 
             FieldInfo fi = typeof(T).GetField(value.ToString());
-            if (fi.GetCustomAttributes(typeof(XmlNameAttribute), false).Count() == 0)
+            if (!fi.GetCustomAttributes(typeof(XmlNameAttribute), false).Any())
                 throw new Exception(String.Format("Attribute 'XmlNameAttribute' is not assigned to {0} fields!", typeof(T).Name));
             XmlNameAttribute a = (XmlNameAttribute)fi.GetCustomAttributes(typeof(XmlNameAttribute), false).First();
             return a.XmlName;
@@ -69,7 +69,7 @@ namespace Novacode
     ///    ValueTwo
     /// }
     /// </example>
-    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Field)]
     internal sealed class XmlNameAttribute : Attribute
     {
         /// <summary>

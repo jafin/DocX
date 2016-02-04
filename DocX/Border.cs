@@ -14,18 +14,18 @@ namespace Novacode
         public Color Color { get; set; }
         public Border()
         {
-            this.Tcbs = BorderStyle.Tcbs_single;
-            this.Size = BorderSize.one;
-            this.Space = 0;
-            this.Color = Color.Black;
+            Tcbs = BorderStyle.Tcbs_single;
+            Size = BorderSize.one;
+            Space = 0;
+            Color = Color.Black;
         }
 
         public Border(BorderStyle tcbs, BorderSize size, int space, Color color)
         {
-            this.Tcbs = tcbs;
-            this.Size = size;
-            this.Space = space;
-            this.Color = color;
+            Tcbs = tcbs;
+            Size = size;
+            Space = space;
+            Color = color;
         }
     }
 }

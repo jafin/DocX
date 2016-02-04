@@ -33,8 +33,7 @@ namespace Novacode
 
                 if (val.Value.Equals("Landscape", StringComparison.CurrentCultureIgnoreCase))
                     return Orientation.Landscape;
-                else
-                    return Orientation.Portrait;
+                return Orientation.Portrait;
             }
 
             set
@@ -57,13 +56,13 @@ namespace Novacode
 
                 pgSz.SetAttributeValue(XName.Get("orient", DocX.w.NamespaceName), value.ToString().ToLower());
 
-                if(value == Novacode.Orientation.Landscape)
+                if(value == Orientation.Landscape)
                 {
                     pgSz.SetAttributeValue(XName.Get("w", DocX.w.NamespaceName), "16838");
                     pgSz.SetAttributeValue(XName.Get("h", DocX.w.NamespaceName), "11906");
                 }
 
-                else if (value == Novacode.Orientation.Portrait)
+                else if (value == Orientation.Portrait)
                 {
                     pgSz.SetAttributeValue(XName.Get("w", DocX.w.NamespaceName), "11906");
                     pgSz.SetAttributeValue(XName.Get("h", DocX.w.NamespaceName), "16838");

@@ -6,8 +6,8 @@
         { 
         }
 
-        public Header odd;
-        public Header even;
-        public Header first;
+        public Header Odd;
+        public Header Even;
+        public Header First;
     }
 }

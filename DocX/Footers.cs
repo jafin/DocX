@@ -7,8 +7,8 @@
             
         }
 
-        public Footer odd;
-        public Footer even;
-        public Footer first;
+        public Footer Odd;
+        public Footer Even;
+        public Footer First;
     }
 }

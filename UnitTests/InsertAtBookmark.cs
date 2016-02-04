@@ -1,8 +1,7 @@
 ﻿using System;
-using Novacode;
 using System.Linq;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Novacode;
 
 namespace UnitTests
 {
@@ -31,7 +30,7 @@ namespace UnitTests
             using (var document = DocX.Create(""))
             {
                 document.AddHeaders();
-                var header = document.Headers.even;
+                var header = document.Headers.Even;
                 header.InsertParagraph("Hello ");
                 header.InsertBookmark("bookmark1");
                 header.InsertParagraph("!");
@@ -49,7 +48,7 @@ namespace UnitTests
             using (var document = DocX.Create(""))
             {
                 document.AddHeaders();
-                var footer = document.Headers.even;
+                var footer = document.Headers.Even;
                 footer.InsertParagraph("Hello ");
                 footer.InsertBookmark("bookmark1");
                 footer.InsertParagraph("!");

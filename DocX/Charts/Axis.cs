@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace Novacode
+namespace Novacode.Charts
 {
     /// <summary>
     /// Axis base class

@@ -1,15 +1,13 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using System.Drawing;
-using System.Xml.Linq;
 using System.Collections;
-using System.IO.Packaging;
-using System.Globalization;
-using System.Security.Principal;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.IO.Packaging;
+using System.Linq;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
-
+using System.Xml.Linq;
 
 namespace Novacode
 {
@@ -220,7 +218,7 @@ namespace Novacode
                             // Add this run to the list.
                             hyperlink_runs.Add(r);
 
-                            XElement fldChar = r.Descendants(XName.Get("fldChar", DocX.w.NamespaceName)).SingleOrDefault<XElement>();
+                            XElement fldChar = r.Descendants(XName.Get("fldChar", DocX.w.NamespaceName)).SingleOrDefault();
                             if (fldChar != null)
                             {
                                 XAttribute fldCharType = fldChar.Attribute(XName.Get("fldCharType", DocX.w.NamespaceName));
@@ -253,7 +251,7 @@ namespace Novacode
         {
             get
             {
-                var element = this.GetOrCreate_pPr();
+                var element = GetOrCreate_pPr();
                 var styleElement = element.Element(XName.Get("pStyle", DocX.w.NamespaceName));
                 if (styleElement != null)
                 {
@@ -271,7 +269,7 @@ namespace Novacode
                 {
                     value = "Normal";
                 }
-                var element = this.GetOrCreate_pPr();
+                var element = GetOrCreate_pPr();
                 var styleElement = element.Element(XName.Get("pStyle", DocX.w.NamespaceName));
                 if (styleElement == null)
                 {
@@ -300,7 +298,7 @@ namespace Novacode
         {
             ParentContainer = parent;
             this.startIndex = startIndex;
-            this.endIndex = startIndex + GetElementTextLength(xml);
+            endIndex = startIndex + GetElementTextLength(xml);
 
             RebuildDocProperties();
 
@@ -339,7 +337,7 @@ namespace Novacode
             //}
             //#endregion
 
-            this.runs = Xml.Elements(XName.Get("r", DocX.w.NamespaceName)).ToList();
+            runs = Xml.Elements(XName.Get("r", DocX.w.NamespaceName)).ToList();
         }
 
         /// <summary>
@@ -412,8 +410,7 @@ namespace Novacode
                 if (bidi == null)
                     return Direction.LeftToRight;
 
-                else
-                    return Direction.RightToLeft;
+                return Direction.RightToLeft;
             }
 
             set
@@ -735,7 +732,7 @@ namespace Novacode
             }
         }
 
-        private float indentationAfter = 0.0f;
+        private float indentationAfter;
         /// <summary>
         /// Set the after indentation in cm for this Paragraph.
         /// </summary>
@@ -1366,14 +1363,14 @@ namespace Novacode
 
                     switch (a.Value.ToLower())
                     {
-                        case "left": return Novacode.Alignment.left;
-                        case "right": return Novacode.Alignment.right;
-                        case "center": return Novacode.Alignment.center;
-                        case "both": return Novacode.Alignment.both;
+                        case "left": return Alignment.left;
+                        case "right": return Alignment.right;
+                        case "center": return Alignment.center;
+                        case "both": return Alignment.both;
                     }
                 }
 
-                return Novacode.Alignment.left;
+                return Alignment.left;
             }
 
             set
@@ -1383,7 +1380,7 @@ namespace Novacode
                 XElement pPr = GetOrCreate_pPr();
                 XElement jc = pPr.Element(XName.Get("jc", DocX.w.NamespaceName));
 
-                if (alignment != Novacode.Alignment.left)
+                if (alignment != Alignment.left)
                 {
                     if (jc == null)
                         pPr.Add(new XElement(XName.Get("jc", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), alignment.ToString())));
@@ -1731,7 +1728,7 @@ namespace Novacode
                             </a:graphic>
                         </wp:inline>
                     </w:drawing></w:r>
-                    ", cx, cy, id, name, descr, newDocPrId.ToString()));
+                    ", cx, cy, id, name, descr, newDocPrId));
 
             return new Picture(document, xml, new Image(document, document.mainPart.GetRelationship(id)));
         }
@@ -1844,7 +1841,6 @@ namespace Novacode
                     case "br": count++; break;
                     case "t": goto case "delText";
                     case "delText": count += d.Value.Length; break;
-                    default: break;
                 }
             }
             return count;
@@ -1866,7 +1862,7 @@ namespace Novacode
 
             return
             (
-                new XElement[]
+                new[]
                 {
                     splitLeft,
                     splitRight
@@ -2180,7 +2176,7 @@ namespace Novacode
             List<XElement> newRuns = HelperFunctions.FormatInput(text, null);
             Xml.Add(newRuns);
 
-            this.runs = Xml.Elements(XName.Get("r", DocX.w.NamespaceName)).Reverse().Take(newRuns.Count()).ToList();
+            runs = Xml.Elements(XName.Get("r", DocX.w.NamespaceName)).Reverse().Take(newRuns.Count()).ToList();
 
             return this;
         }
@@ -2226,7 +2222,7 @@ namespace Novacode
             Xml.Add(h.Xml);
             Xml.Elements().Last().SetAttributeValue(DocX.r + "id", Id);
 
-            this.runs = Xml.Elements().Last().Elements(XName.Get("r", DocX.w.NamespaceName)).ToList();
+            runs = Xml.Elements().Last().Elements(XName.Get("r", DocX.w.NamespaceName)).ToList();
 
             return this;
         }
@@ -2290,7 +2286,7 @@ namespace Novacode
             a_id.SetValue(Id);
 
             // For formatting such as .Bold()
-            this.runs = Xml.Elements(XName.Get("r", DocX.w.NamespaceName)).Reverse().Take(p.Xml.Elements(XName.Get("r", DocX.w.NamespaceName)).Count()).ToList();
+            runs = Xml.Elements(XName.Get("r", DocX.w.NamespaceName)).Reverse().Take(p.Xml.Elements(XName.Get("r", DocX.w.NamespaceName)).Count()).ToList();
 
             return this;
         }
@@ -2326,7 +2322,7 @@ namespace Novacode
                         new XElement
                         (
                             XName.Get("r", DocX.w.NamespaceName),
-                            new Formatting() { FontFamily = new System.Drawing.FontFamily("Cambria Math") }.Xml,    // create formatting
+                            new Formatting { FontFamily = new FontFamily("Cambria Math") }.Xml,    // create formatting
                             new XElement(XName.Get("t", DocX.m.NamespaceName), equation)                            // create equation string
                         )
                     )
@@ -2671,15 +2667,15 @@ namespace Novacode
 
                 rPr.SetElementValue(textFormatPropName, value);
                 var last = rPr.Elements().Last();
-                if (content as System.Xml.Linq.XAttribute != null)//If content is an attribute
+                if (content as XAttribute != null)//If content is an attribute
                 {
-                    if (last.Attribute(((System.Xml.Linq.XAttribute)(content)).Name) == null)
+                    if (last.Attribute(((XAttribute)(content)).Name) == null)
                     {
                         last.Add(content); //Add this attribute if element doesn't have it
                     }
                     else
                     {
-                        last.Attribute(((System.Xml.Linq.XAttribute)(content)).Name).Value = ((System.Xml.Linq.XAttribute)(content)).Value; //Apply value only if element already has it
+                        last.Attribute(((XAttribute)(content)).Name).Value = ((XAttribute)(content)).Value; //Apply value only if element already has it
                     }
                 }
                 return;
@@ -2711,33 +2707,28 @@ namespace Novacode
                 {
                     foreach (object property in fontProps)
                     {
-                        if (last.Attribute(((System.Xml.Linq.XAttribute)(property)).Name) == null)
+                        if (last.Attribute(((XAttribute)(property)).Name) == null)
                         {
                             last.Add(property); //Add this attribute if element doesn't have it
                         }
                         else
                         {
-                            last.Attribute(((System.Xml.Linq.XAttribute)(property)).Name).Value =
-                              ((System.Xml.Linq.XAttribute)(property)).Value; //Apply value only if element already has it
+                            last.Attribute(((XAttribute)(property)).Name).Value =
+                              ((XAttribute)(property)).Value; //Apply value only if element already has it
                         }
                     }
                 }
 
-                if (content as System.Xml.Linq.XAttribute != null)//If content is an attribute
+                if (content as XAttribute != null)//If content is an attribute
                 {
-                    if (last.Attribute(((System.Xml.Linq.XAttribute)(content)).Name) == null)
+                    if (last.Attribute(((XAttribute)(content)).Name) == null)
                     {
                         last.Add(content); //Add this attribute if element doesn't have it
                     }
                     else
                     {
-                        last.Attribute(((System.Xml.Linq.XAttribute)(content)).Name).Value = ((System.Xml.Linq.XAttribute)(content)).Value; //Apply value only if element already has it
+                        last.Attribute(((XAttribute)(content)).Name).Value = ((XAttribute)(content)).Value; //Apply value only if element already has it
                     }
-                }
-                else
-                {
-                    //IMPORTANT
-                    //But what to do if it is not?
                 }
             }
         }
@@ -2955,7 +2946,7 @@ namespace Novacode
                 {
                     new XAttribute(XName.Get("ascii", DocX.w.NamespaceName), fontFamily.Name),
                     new XAttribute(XName.Get("hAnsi", DocX.w.NamespaceName), fontFamily.Name), // Added by Maurits Elbers to support non-standard characters. See http://docx.codeplex.com/Thread/View.aspx?ThreadId=70097&ANCHOR#Post453865
-                    new XAttribute(XName.Get("cs", DocX.w.NamespaceName), fontFamily.Name),    // Added by Maurits Elbers to support non-standard characters. See http://docx.codeplex.com/Thread/View.aspx?ThreadId=70097&ANCHOR#Post453865
+                    new XAttribute(XName.Get("cs", DocX.w.NamespaceName), fontFamily.Name)    // Added by Maurits Elbers to support non-standard characters. See http://docx.codeplex.com/Thread/View.aspx?ThreadId=70097&ANCHOR#Post453865
                 }
             );
 
@@ -3292,7 +3283,7 @@ namespace Novacode
             spacingFloat = spacingFloat * 240;
             int spacingValue = (int)spacingFloat;
 
-            var pPr = this.GetOrCreate_pPr();
+            var pPr = GetOrCreate_pPr();
             var spacing = pPr.Element(XName.Get("spacing", DocX.w.NamespaceName));
             if (spacing == null)
             {
@@ -3332,7 +3323,7 @@ namespace Novacode
         {
             int spacingValue = 100;
 
-            var pPr = this.GetOrCreate_pPr();
+            var pPr = GetOrCreate_pPr();
             var spacing = pPr.Element(XName.Get("spacing", DocX.w.NamespaceName));
 
             if (spacingType.Equals(LineSpacingTypeAuto.None))
@@ -3469,7 +3460,7 @@ namespace Novacode
         public Paragraph Kerning(int kerning)
         {
             if (!new int?[] { 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 }.Contains(kerning))
-                throw new ArgumentOutOfRangeException("Kerning", "Value must be one of the following: 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48 or 72");
+                throw new ArgumentOutOfRangeException("kerning", "Value must be one of the following: 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48 or 72");
 
             ApplyTextFormattingProperty(XName.Get("kern", DocX.w.NamespaceName), string.Empty, new XAttribute(XName.Get("val", DocX.w.NamespaceName), kerning * 2));
             return this;
@@ -3478,7 +3469,7 @@ namespace Novacode
         public Paragraph Position(double position)
         {
             if (!(position > -1585 && position < 1585))
-                throw new ArgumentOutOfRangeException("Position", "Value must be in the range -1585 - 1585");
+                throw new ArgumentOutOfRangeException("position", "Value must be in the range -1585 - 1585");
 
             ApplyTextFormattingProperty(XName.Get("position", DocX.w.NamespaceName), string.Empty, new XAttribute(XName.Get("val", DocX.w.NamespaceName), position * 2));
 
@@ -3488,7 +3479,7 @@ namespace Novacode
         public Paragraph PercentageScale(int percentageScale)
         {
             if (!(new int?[] { 200, 150, 100, 90, 80, 66, 50, 33 }).Contains(percentageScale))
-                throw new ArgumentOutOfRangeException("PercentageScale", "Value must be one of the following: 200, 150, 100, 90, 80, 66, 50 or 33");
+                throw new ArgumentOutOfRangeException("percentageScale", "Value must be one of the following: 200, 150, 100, 90, 80, 66, 50 or 33");
 
             ApplyTextFormattingProperty(XName.Get("w", DocX.w.NamespaceName), string.Empty, new XAttribute(XName.Get("val", DocX.w.NamespaceName), percentageScale));
 
@@ -3533,7 +3524,7 @@ namespace Novacode
         /// </example>
         public Paragraph AppendDocProperty(CustomProperty cp, bool trackChanges = false, Formatting f = null)
         {
-            this.InsertDocProperty(cp, trackChanges, f);
+            InsertDocProperty(cp, trackChanges, f);
             return this;
         }
 
@@ -3687,7 +3678,7 @@ namespace Novacode
                             int min = Math.Min(index + (count - processed), run.EndIndex);
                             XElement[] splitRunAfter = Run.SplitRun(run, min, EditType.del);
 
-                            object middle = CreateEdit(EditType.del, remove_datetime, new List<XElement>() { Run.SplitRun(new Run(Document, splitRunBefore[1], run.StartIndex + GetElementTextLength(splitRunBefore[0])), min, EditType.del)[0] });
+                            object middle = CreateEdit(EditType.del, remove_datetime, new List<XElement> { Run.SplitRun(new Run(Document, splitRunBefore[1], run.StartIndex + GetElementTextLength(splitRunBefore[0])), min, EditType.del)[0] });
                             processed += GetElementTextLength(middle as XElement);
 
                             if (!trackChanges)
@@ -3993,7 +3984,7 @@ namespace Novacode
         /// </example>
         public List<int> FindAll(string str, RegexOptions options)
         {
-            MatchCollection mc = Regex.Matches(this.Text, Regex.Escape(str), options);
+            MatchCollection mc = Regex.Matches(Text, Regex.Escape(str), options);
 
             var query =
             (
@@ -4012,7 +4003,7 @@ namespace Novacode
         /// <returns></returns>
         public List<string> FindAllByPattern(string str, RegexOptions options)
         {
-            MatchCollection mc = Regex.Matches(this.Text, str, options);
+            MatchCollection mc = Regex.Matches(Text, str, options);
 
             var query =
             (
@@ -4400,7 +4391,6 @@ namespace Novacode
                             }
                             break;
                         }
-                    default: break;
                 }
             }
 
@@ -4424,7 +4414,7 @@ namespace Novacode
 
             return
             (
-                new XElement[]
+                new[]
                 {
                     splitLeft,
                     splitRight
@@ -4557,7 +4547,7 @@ namespace Novacode
 
             return
             (
-                new XElement[]
+                new[]
                 {
                     splitLeft,
                     splitRight

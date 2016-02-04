@@ -37,8 +37,8 @@ namespace Novacode
         /// <param name="xml">The Xml that gives this element substance</param>
         public DocXElement(DocX document, XElement xml)
         {
-            this.Document = document;
-            this.Xml = xml;
+            Document = document;
+            Xml = xml;
         }
     }
 
@@ -108,11 +108,8 @@ namespace Novacode
             {
                 return new Paragraph(Document, newlyInserted, (this as Paragraph).endIndex);
             }
-            else
-            {
-                p.Xml = newlyInserted; //IMPORTANT: I think we have return new paragraph in any case, but I dont know what to put as startIndex parameter into Paragraph constructor
-                return p;
-            }
+            p.Xml = newlyInserted; //IMPORTANT: I think we have return new paragraph in any case, but I dont know what to put as startIndex parameter into Paragraph constructor
+            return p;
         }
 
         public virtual Paragraph InsertParagraphBeforeSelf(string text)

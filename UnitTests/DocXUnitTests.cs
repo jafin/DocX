@@ -1,16 +1,17 @@
 ﻿using System;
-using Novacode;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Drawing;
-using System.Xml.Linq;
 using System.Reflection;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.ObjectModel;
 using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Novacode;
 using Formatting = Novacode.Formatting;
+using Image = Novacode.Image;
 
 namespace UnitTests
 {
@@ -55,9 +56,9 @@ namespace UnitTests
                 {
                     var tbl = doc.InsertTable(1, 18);
                     
-                    var wholeWidth = doc.PageWidth - doc.MarginLeft - doc.MarginRight;
-                    var colWidth = wholeWidth / tbl.ColumnCount;
-                    var colWidths = new int[tbl.ColumnCount];
+                    //var wholeWidth = doc.PageWidth - doc.MarginLeft - doc.MarginRight;
+//                    var colWidth = wholeWidth / tbl.ColumnCount;
+//                    var colWidths = new int[tbl.ColumnCount];
                     tbl.AutoFit=AutoFit.Contents;
                     var r = tbl.Rows[0];
                     var cx = 0;
@@ -91,10 +92,10 @@ namespace UnitTests
             {
                 using (var doc = DocX.Create(output))
                 {
-                    var widths = new float[] {200f, 100f, 300f};
+                    var widths = new[] {200f, 100f, 300f};
                     var tbl = doc.InsertTable(1, widths.Length);
                     tbl.SetWidths(widths);
-                    var wholeWidth = doc.PageWidth - doc.MarginLeft - doc.MarginRight;
+                    //var wholeWidth = doc.PageWidth - doc.MarginLeft - doc.MarginRight;
                     tbl.AutoFit = AutoFit.Contents;
                     var r = tbl.Rows[0];
                     var cx = 0;
@@ -146,8 +147,7 @@ namespace UnitTests
 
         public string ReplaceFunc(string findStr)
         {
-            Dictionary<string, string> testPatterns = new Dictionary<string, string>()
-            {
+            Dictionary<string, string> testPatterns = new Dictionary<string, string> {
                 {"COURT NAME","Fred Frump"},
                 {"Case Number","cr-md-2011-1234567"}
             };
@@ -160,20 +160,9 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void RegexTest()
-        {
-            var findPattern = "<(.*?)>";
-            var sample = "<Match This> text";
-            var matchCollection = Regex.Matches(sample, findPattern,RegexOptions.IgnoreCase);
-            int i = 1;
-
-        }
-
-        [TestMethod]
         public void Test_Pattern_Replacement()
         {
-            Dictionary<string, string> testPatterns = new Dictionary<string, string>()
-            {
+            Dictionary<string, string> testPatterns = new Dictionary<string, string> {
                 {"COURT NAME","Fred Frump"}, 
                 {"Case Number","cr-md-2011-1234567"}
             };
@@ -200,12 +189,8 @@ namespace UnitTests
                 Assert.IsTrue(replaceDoc.FindAll("cr-md-2011-1234567").Count == 0);
 
                 // Do the replacing
-                foreach (var p in testPatterns)
-                {
-                    replaceDoc.ReplaceText("<(.*?)>", ReplaceFunc,false,RegexOptions.IgnoreCase);
-                    //replaceDoc.ReplaceText("<" + p.Key + ">", p.Value, false, RegexOptions.IgnoreCase);
-                }
-
+                replaceDoc.ReplaceText("<(.*?)>", ReplaceFunc, false, RegexOptions.IgnoreCase);
+                
                 // Make sure the origional string are no longer in the document.
                 Assert.IsTrue(replaceDoc.FindAll("<COURT NAME>").Count == 0);
                 Assert.IsTrue(replaceDoc.FindAll("<Case Number>").Count == 0);
@@ -244,7 +229,7 @@ namespace UnitTests
 
                 Assert.IsTrue(document.CustomProperties.Count == 3);
                 Assert.IsTrue(document.CustomProperties.ContainsKey("male"));
-                Assert.IsTrue((bool)document.CustomProperties["male"].Value == true);
+                Assert.IsTrue((bool)document.CustomProperties["male"].Value);
 
                 document.AddCustomProperty(new CustomProperty("newyear2012", new DateTime(2012, 1, 1)));
 
@@ -275,7 +260,7 @@ namespace UnitTests
                 Assert.IsTrue(document.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(document_xml_file));
 
                 // header first
-                Header header_first = document.Headers.first;
+                Header header_first = document.Headers.First;
                 string header_first_xml_file = header_first.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(header_first.Paragraphs[0].mainPart.Uri.OriginalString.Equals(header_first_xml_file));
@@ -285,7 +270,7 @@ namespace UnitTests
                 Assert.IsTrue(header_first.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(header_first_xml_file));
 
                 // header odd
-                Header header_odd = document.Headers.odd;
+                Header header_odd = document.Headers.Odd;
                 string header_odd_xml_file = header_odd.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(header_odd.mainPart.Uri.OriginalString.Equals(header_odd_xml_file));
@@ -296,7 +281,7 @@ namespace UnitTests
                 Assert.IsTrue(header_odd.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(header_odd_xml_file));
 
                 // header even
-                Header header_even = document.Headers.even;
+                Header header_even = document.Headers.Even;
                 string header_even_xml_file = header_even.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(header_even.mainPart.Uri.OriginalString.Equals(header_even_xml_file));
@@ -307,7 +292,7 @@ namespace UnitTests
                 Assert.IsTrue(header_even.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(header_even_xml_file));
 
                 // footer first
-                Footer footer_first = document.Footers.first;
+                Footer footer_first = document.Footers.First;
                 string footer_first_xml_file = footer_first.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(footer_first.mainPart.Uri.OriginalString.Equals(footer_first_xml_file));
@@ -318,7 +303,7 @@ namespace UnitTests
                 Assert.IsTrue(footer_first.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(footer_first_xml_file));
 
                 // footer odd
-                Footer footer_odd = document.Footers.odd;
+                Footer footer_odd = document.Footers.Odd;
                 string footer_odd_xml_file = footer_odd.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(footer_odd.mainPart.Uri.OriginalString.Equals(footer_odd_xml_file));
@@ -329,7 +314,7 @@ namespace UnitTests
                 Assert.IsTrue(footer_odd.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(footer_odd_xml_file));
 
                 // footer even
-                Footer footer_even = document.Footers.even;
+                Footer footer_even = document.Footers.Even;
                 string footer_even_xml_file = footer_even.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(footer_even.mainPart.Uri.OriginalString.Equals(footer_even_xml_file));
@@ -348,7 +333,7 @@ namespace UnitTests
             using (DocX document = DocX.Create(_directoryDocuments + "Test.docx"))
             {
                 // Add an Image to this document.
-                Novacode.Image img = document.AddImage(_directoryWithFiles + "purple.png");
+                Image img = document.AddImage(_directoryWithFiles + "purple.png");
 
                 // Create a Picture from this Image.
                 Picture pic = img.CreatePicture();
@@ -371,7 +356,7 @@ namespace UnitTests
             using (DocX document = DocX.Create(_directoryDocuments + "Test.docx"))
             {
                 // Add an Image to this document.
-                Novacode.Image img = document.AddImage(_directoryWithFiles + "purple.png");
+                Image img = document.AddImage(_directoryWithFiles + "purple.png");
 
                 // Create a Picture from this Image.
                 Picture pic = img.CreatePicture();
@@ -403,21 +388,21 @@ namespace UnitTests
 
                 // Insert a Paragraph and a Table into every Header.
                 document.AddHeaders();
-                document.Headers.odd.InsertParagraph();
-                document.Headers.odd.InsertTable(t);
-                document.Headers.even.InsertParagraph();
-                document.Headers.even.InsertTable(t);
-                document.Headers.first.InsertParagraph();
-                document.Headers.first.InsertTable(t);
+                document.Headers.Odd.InsertParagraph();
+                document.Headers.Odd.InsertTable(t);
+                document.Headers.Even.InsertParagraph();
+                document.Headers.Even.InsertTable(t);
+                document.Headers.First.InsertParagraph();
+                document.Headers.First.InsertTable(t);
 
                 // Insert a Paragraph and a Table into every Footer.
                 document.AddFooters();
-                document.Footers.odd.InsertParagraph();
-                document.Footers.odd.InsertTable(t);
-                document.Footers.even.InsertParagraph();
-                document.Footers.even.InsertTable(t);
-                document.Footers.first.InsertParagraph();
-                document.Footers.first.InsertTable(t);
+                document.Footers.Odd.InsertParagraph();
+                document.Footers.Odd.InsertTable(t);
+                document.Footers.Even.InsertParagraph();
+                document.Footers.Even.InsertTable(t);
+                document.Footers.First.InsertParagraph();
+                document.Footers.First.InsertTable(t);
 
                 // Main document tests.
                 string document_xml_file = document.mainPart.Uri.OriginalString;
@@ -428,7 +413,7 @@ namespace UnitTests
                 Assert.IsTrue(document.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(document_xml_file));
 
                 // header first
-                Header header_first = document.Headers.first;
+                Header header_first = document.Headers.First;
                 string header_first_xml_file = header_first.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(header_first.Paragraphs[0].mainPart.Uri.OriginalString.Equals(header_first_xml_file));
@@ -438,7 +423,7 @@ namespace UnitTests
                 Assert.IsTrue(header_first.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(header_first_xml_file));
 
                 // header odd
-                Header header_odd = document.Headers.odd;
+                Header header_odd = document.Headers.Odd;
                 string header_odd_xml_file = header_odd.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(header_odd.mainPart.Uri.OriginalString.Equals(header_odd_xml_file));
@@ -449,7 +434,7 @@ namespace UnitTests
                 Assert.IsTrue(header_odd.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(header_odd_xml_file));
 
                 // header even
-                Header header_even = document.Headers.even;
+                Header header_even = document.Headers.Even;
                 string header_even_xml_file = header_even.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(header_even.mainPart.Uri.OriginalString.Equals(header_even_xml_file));
@@ -460,7 +445,7 @@ namespace UnitTests
                 Assert.IsTrue(header_even.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(header_even_xml_file));
 
                 // footer first
-                Footer footer_first = document.Footers.first;
+                Footer footer_first = document.Footers.First;
                 string footer_first_xml_file = footer_first.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(footer_first.mainPart.Uri.OriginalString.Equals(footer_first_xml_file));
@@ -471,7 +456,7 @@ namespace UnitTests
                 Assert.IsTrue(footer_first.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(footer_first_xml_file));
 
                 // footer odd
-                Footer footer_odd = document.Footers.odd;
+                Footer footer_odd = document.Footers.Odd;
                 string footer_odd_xml_file = footer_odd.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(footer_odd.mainPart.Uri.OriginalString.Equals(footer_odd_xml_file));
@@ -482,7 +467,7 @@ namespace UnitTests
                 Assert.IsTrue(footer_odd.Tables[0].Rows[0].Cells[0].Paragraphs[0].mainPart.Uri.OriginalString.Equals(footer_odd_xml_file));
 
                 // footer even
-                Footer footer_even = document.Footers.even;
+                Footer footer_even = document.Footers.Even;
                 string footer_even_xml_file = footer_even.mainPart.Uri.OriginalString;
 
                 Assert.IsTrue(footer_even.mainPart.Uri.OriginalString.Equals(footer_even_xml_file));
@@ -500,27 +485,27 @@ namespace UnitTests
             using (DocX document = DocX.Create(_directoryDocuments + "test_add_images.docx"))
             {
                 // Add a png to into this document
-                Novacode.Image png = document.AddImage(_directoryWithFiles + "purple.png");
+                Image png = document.AddImage(_directoryWithFiles + "purple.png");
                 Assert.IsTrue(document.Images.Count == 1);
                 Assert.IsTrue(Path.GetExtension(png.pr.TargetUri.OriginalString) == ".png");
 
                 // Add a tiff into to this document
-                Novacode.Image tif = document.AddImage(_directoryWithFiles + "yellow.tif");
+                Image tif = document.AddImage(_directoryWithFiles + "yellow.tif");
                 Assert.IsTrue(document.Images.Count == 2);
                 Assert.IsTrue(Path.GetExtension(tif.pr.TargetUri.OriginalString) == ".tif");
 
                 // Add a gif into to this document
-                Novacode.Image gif = document.AddImage(_directoryWithFiles + "orange.gif");
+                Image gif = document.AddImage(_directoryWithFiles + "orange.gif");
                 Assert.IsTrue(document.Images.Count == 3);
                 Assert.IsTrue(Path.GetExtension(gif.pr.TargetUri.OriginalString) == ".gif");
 
                 // Add a jpg into to this document
-                Novacode.Image jpg = document.AddImage(_directoryWithFiles + "green.jpg");
+                Image jpg = document.AddImage(_directoryWithFiles + "green.jpg");
                 Assert.IsTrue(document.Images.Count == 4);
                 Assert.IsTrue(Path.GetExtension(jpg.pr.TargetUri.OriginalString) == ".jpg");
 
                 // Add a bitmap to this document
-                Novacode.Image bitmap = document.AddImage(_directoryWithFiles + "red.bmp");
+                Image bitmap = document.AddImage(_directoryWithFiles + "red.bmp");
                 Assert.IsTrue(document.Images.Count == 5);
                 // Word does not allow bmp make sure it was inserted as a png.
                 Assert.IsTrue(Path.GetExtension(bitmap.pr.TargetUri.OriginalString) == ".png");
@@ -535,27 +520,27 @@ namespace UnitTests
                 // DocX will always insert Images that come from Streams as jpeg.
 
                 // Add a png to into this document
-                Novacode.Image png = document.AddImage(new FileStream(_directoryWithFiles + "purple.png", FileMode.Open));
+                Image png = document.AddImage(new FileStream(_directoryWithFiles + "purple.png", FileMode.Open));
                 Assert.IsTrue(document.Images.Count == 1);
                 Assert.IsTrue(Path.GetExtension(png.pr.TargetUri.OriginalString) == ".jpeg");
 
                 // Add a tiff into to this document
-                Novacode.Image tif = document.AddImage(new FileStream(_directoryWithFiles + "yellow.tif", FileMode.Open));
+                Image tif = document.AddImage(new FileStream(_directoryWithFiles + "yellow.tif", FileMode.Open));
                 Assert.IsTrue(document.Images.Count == 2);
                 Assert.IsTrue(Path.GetExtension(tif.pr.TargetUri.OriginalString) == ".jpeg");
 
                 // Add a gif into to this document
-                Novacode.Image gif = document.AddImage(new FileStream(_directoryWithFiles + "orange.gif", FileMode.Open));
+                Image gif = document.AddImage(new FileStream(_directoryWithFiles + "orange.gif", FileMode.Open));
                 Assert.IsTrue(document.Images.Count == 3);
                 Assert.IsTrue(Path.GetExtension(gif.pr.TargetUri.OriginalString) == ".jpeg");
 
                 // Add a jpg into to this document
-                Novacode.Image jpg = document.AddImage(new FileStream(_directoryWithFiles + "green.jpg", FileMode.Open));
+                Image jpg = document.AddImage(new FileStream(_directoryWithFiles + "green.jpg", FileMode.Open));
                 Assert.IsTrue(document.Images.Count == 4);
                 Assert.IsTrue(Path.GetExtension(jpg.pr.TargetUri.OriginalString) == ".jpeg");
 
                 // Add a bitmap to this document
-                Novacode.Image bitmap = document.AddImage(new FileStream(_directoryWithFiles + "red.bmp", FileMode.Open));
+                Image bitmap = document.AddImage(new FileStream(_directoryWithFiles + "red.bmp", FileMode.Open));
                 Assert.IsTrue(document.Images.Count == 5);
                 // Word does not allow bmp make sure it was inserted as a png.
                 Assert.IsTrue(Path.GetExtension(bitmap.pr.TargetUri.OriginalString) == ".jpeg");
@@ -587,20 +572,20 @@ namespace UnitTests
             using (DocX document = DocX.Load(_directoryWithFiles + "Images.docx"))
             {
                 // Extract Images from Document.
-                List<Novacode.Image> document_images = document.Images;
+                List<Image> document_images = document.Images;
 
                 // Make sure there are 3 Images in this document.
                 Assert.IsTrue(document_images.Count() == 3);
 
                 // Extract the headers from this document.
                 Headers headers = document.Headers;
-                Header header_first = headers.first;
-                Header header_odd = headers.odd;
-                Header header_even = headers.even;
+                Header header_first = headers.First;
+                Header header_odd = headers.Odd;
+                Header header_even = headers.Even;
 
                 #region Header_First
                 // Extract Images from the first Header.
-                List<Novacode.Image> header_first_images = header_first.Images;
+                List<Image> header_first_images = header_first.Images;
 
                 // Make sure there is 1 Image in the first header.
                 Assert.IsTrue(header_first_images.Count() == 1);
@@ -608,7 +593,7 @@ namespace UnitTests
 
                 #region Header_Odd
                 // Extract Images from the odd Header.
-                List<Novacode.Image> header_odd_images = header_odd.Images;
+                List<Image> header_odd_images = header_odd.Images;
 
                 // Make sure there is 1 Image in the first header.
                 Assert.IsTrue(header_odd_images.Count() == 1);
@@ -616,7 +601,7 @@ namespace UnitTests
 
                 #region Header_Even
                 // Extract Images from the odd Header.
-                List<Novacode.Image> header_even_images = header_even.Images;
+                List<Image> header_even_images = header_even.Images;
 
                 // Make sure there is 1 Image in the first header.
                 Assert.IsTrue(header_even_images.Count() == 1);
@@ -637,7 +622,7 @@ namespace UnitTests
                 document.DifferentOddAndEvenPages = true;
 
                 // Add an Image to this document.
-                Novacode.Image img = document.AddImage(_directoryWithFiles + "purple.png");
+                Image img = document.AddImage(_directoryWithFiles + "purple.png");
 
                 // Create a Picture from this Image.
                 Picture pic = img.CreatePicture();
@@ -647,27 +632,27 @@ namespace UnitTests
                 p0.InsertPicture(pic, 3);
 
                 // Header first.
-                Paragraph p1 = document.Headers.first.InsertParagraph("----");
+                Paragraph p1 = document.Headers.First.InsertParagraph("----");
                 p1.InsertPicture(pic, 2);
 
                 // Header odd.
-                Paragraph p2 = document.Headers.odd.InsertParagraph("----");
+                Paragraph p2 = document.Headers.Odd.InsertParagraph("----");
                 p2.InsertPicture(pic, 2);
 
                 // Header even.
-                Paragraph p3 = document.Headers.even.InsertParagraph("----");
+                Paragraph p3 = document.Headers.Even.InsertParagraph("----");
                 p3.InsertPicture(pic, 2);
 
                 // Footer first.
-                Paragraph p4 = document.Footers.first.InsertParagraph("----");
+                Paragraph p4 = document.Footers.First.InsertParagraph("----");
                 p4.InsertPicture(pic, 2);
 
                 // Footer odd.
-                Paragraph p5 = document.Footers.odd.InsertParagraph("----");
+                Paragraph p5 = document.Footers.Odd.InsertParagraph("----");
                 p5.InsertPicture(pic, 2);
 
                 // Footer even.
-                Paragraph p6 = document.Footers.even.InsertParagraph("----");
+                Paragraph p6 = document.Footers.Even.InsertParagraph("----");
                 p6.InsertPicture(pic, 2);
 
                 // Save this document.
@@ -695,27 +680,27 @@ namespace UnitTests
                 p0.InsertHyperlink(h, 3);
 
                 // Header first.
-                Paragraph p1 = document.Headers.first.InsertParagraph("----");
+                Paragraph p1 = document.Headers.First.InsertParagraph("----");
                 p1.InsertHyperlink(h, 3);
 
                 // Header odd.
-                Paragraph p2 = document.Headers.odd.InsertParagraph("----");
+                Paragraph p2 = document.Headers.Odd.InsertParagraph("----");
                 p2.InsertHyperlink(h, 3);
 
                 // Header even.
-                Paragraph p3 = document.Headers.even.InsertParagraph("----");
+                Paragraph p3 = document.Headers.Even.InsertParagraph("----");
                 p3.InsertHyperlink(h, 3);
 
                 // Footer first.
-                Paragraph p4 = document.Footers.first.InsertParagraph("----");
+                Paragraph p4 = document.Footers.First.InsertParagraph("----");
                 p4.InsertHyperlink(h, 3);
 
                 // Footer odd.
-                Paragraph p5 = document.Footers.odd.InsertParagraph("----");
+                Paragraph p5 = document.Footers.Odd.InsertParagraph("----");
                 p5.InsertHyperlink(h, 3);
 
                 // Footer even.
-                Paragraph p6 = document.Footers.even.InsertParagraph("----");
+                Paragraph p6 = document.Footers.Even.InsertParagraph("----");
                 p6.InsertHyperlink(h, 3);
 
                 // Save this document.
@@ -752,65 +737,65 @@ namespace UnitTests
                 Assert.IsTrue(document.Hyperlinks[2].Text == "somethingnew");
                 Assert.IsTrue(document.Hyperlinks[2].Uri.AbsoluteUri == "http://www.google.com/");
 
-                Assert.IsTrue(document.Headers.first.Hyperlinks.Count == 1);
-                Assert.IsTrue(document.Headers.first.Hyperlinks[0].Text == "header-first");
-                Assert.IsTrue(document.Headers.first.Hyperlinks[0].Uri.AbsoluteUri == "http://www.header-first.com/");
+                Assert.IsTrue(document.Headers.First.Hyperlinks.Count == 1);
+                Assert.IsTrue(document.Headers.First.Hyperlinks[0].Text == "header-first");
+                Assert.IsTrue(document.Headers.First.Hyperlinks[0].Uri.AbsoluteUri == "http://www.header-first.com/");
 
                 // Change the Hyperlinks and check that it has in fact changed.
-                document.Headers.first.Hyperlinks[0].Text = "somethingnew";
-                document.Headers.first.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
-                Assert.IsTrue(document.Headers.first.Hyperlinks[0].Text == "somethingnew");
-                Assert.IsTrue(document.Headers.first.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
+                document.Headers.First.Hyperlinks[0].Text = "somethingnew";
+                document.Headers.First.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
+                Assert.IsTrue(document.Headers.First.Hyperlinks[0].Text == "somethingnew");
+                Assert.IsTrue(document.Headers.First.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
 
-                Assert.IsTrue(document.Headers.odd.Hyperlinks.Count == 1);
-                Assert.IsTrue(document.Headers.odd.Hyperlinks[0].Text == "header-odd");
-                Assert.IsTrue(document.Headers.odd.Hyperlinks[0].Uri.AbsoluteUri == "http://www.header-odd.com/");
-
-                // Change the Hyperlinks and check that it has in fact changed.
-                document.Headers.odd.Hyperlinks[0].Text = "somethingnew";
-                document.Headers.odd.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
-                Assert.IsTrue(document.Headers.odd.Hyperlinks[0].Text == "somethingnew");
-                Assert.IsTrue(document.Headers.odd.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
-
-                Assert.IsTrue(document.Headers.even.Hyperlinks.Count == 1);
-                Assert.IsTrue(document.Headers.even.Hyperlinks[0].Text == "header-even");
-                Assert.IsTrue(document.Headers.even.Hyperlinks[0].Uri.AbsoluteUri == "http://www.header-even.com/");
+                Assert.IsTrue(document.Headers.Odd.Hyperlinks.Count == 1);
+                Assert.IsTrue(document.Headers.Odd.Hyperlinks[0].Text == "header-odd");
+                Assert.IsTrue(document.Headers.Odd.Hyperlinks[0].Uri.AbsoluteUri == "http://www.header-odd.com/");
 
                 // Change the Hyperlinks and check that it has in fact changed.
-                document.Headers.even.Hyperlinks[0].Text = "somethingnew";
-                document.Headers.even.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
-                Assert.IsTrue(document.Headers.even.Hyperlinks[0].Text == "somethingnew");
-                Assert.IsTrue(document.Headers.even.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
+                document.Headers.Odd.Hyperlinks[0].Text = "somethingnew";
+                document.Headers.Odd.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
+                Assert.IsTrue(document.Headers.Odd.Hyperlinks[0].Text == "somethingnew");
+                Assert.IsTrue(document.Headers.Odd.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
 
-                Assert.IsTrue(document.Footers.first.Hyperlinks.Count == 1);
-                Assert.IsTrue(document.Footers.first.Hyperlinks[0].Text == "footer-first");
-                Assert.IsTrue(document.Footers.first.Hyperlinks[0].Uri.AbsoluteUri == "http://www.footer-first.com/");
-
-                // Change the Hyperlinks and check that it has in fact changed.
-                document.Footers.first.Hyperlinks[0].Text = "somethingnew";
-                document.Footers.first.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
-                Assert.IsTrue(document.Footers.first.Hyperlinks[0].Text == "somethingnew");
-                Assert.IsTrue(document.Footers.first.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
-
-                Assert.IsTrue(document.Footers.odd.Hyperlinks.Count == 1);
-                Assert.IsTrue(document.Footers.odd.Hyperlinks[0].Text == "footer-odd");
-                Assert.IsTrue(document.Footers.odd.Hyperlinks[0].Uri.AbsoluteUri == "http://www.footer-odd.com/");
+                Assert.IsTrue(document.Headers.Even.Hyperlinks.Count == 1);
+                Assert.IsTrue(document.Headers.Even.Hyperlinks[0].Text == "header-even");
+                Assert.IsTrue(document.Headers.Even.Hyperlinks[0].Uri.AbsoluteUri == "http://www.header-even.com/");
 
                 // Change the Hyperlinks and check that it has in fact changed.
-                document.Footers.odd.Hyperlinks[0].Text = "somethingnew";
-                document.Footers.odd.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
-                Assert.IsTrue(document.Footers.odd.Hyperlinks[0].Text == "somethingnew");
-                Assert.IsTrue(document.Footers.odd.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
+                document.Headers.Even.Hyperlinks[0].Text = "somethingnew";
+                document.Headers.Even.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
+                Assert.IsTrue(document.Headers.Even.Hyperlinks[0].Text == "somethingnew");
+                Assert.IsTrue(document.Headers.Even.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
 
-                Assert.IsTrue(document.Footers.even.Hyperlinks.Count == 1);
-                Assert.IsTrue(document.Footers.even.Hyperlinks[0].Text == "footer-even");
-                Assert.IsTrue(document.Footers.even.Hyperlinks[0].Uri.AbsoluteUri == "http://www.footer-even.com/");
+                Assert.IsTrue(document.Footers.First.Hyperlinks.Count == 1);
+                Assert.IsTrue(document.Footers.First.Hyperlinks[0].Text == "footer-first");
+                Assert.IsTrue(document.Footers.First.Hyperlinks[0].Uri.AbsoluteUri == "http://www.footer-first.com/");
 
                 // Change the Hyperlinks and check that it has in fact changed.
-                document.Footers.even.Hyperlinks[0].Text = "somethingnew";
-                document.Footers.even.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
-                Assert.IsTrue(document.Footers.even.Hyperlinks[0].Text == "somethingnew");
-                Assert.IsTrue(document.Footers.even.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
+                document.Footers.First.Hyperlinks[0].Text = "somethingnew";
+                document.Footers.First.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
+                Assert.IsTrue(document.Footers.First.Hyperlinks[0].Text == "somethingnew");
+                Assert.IsTrue(document.Footers.First.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
+
+                Assert.IsTrue(document.Footers.Odd.Hyperlinks.Count == 1);
+                Assert.IsTrue(document.Footers.Odd.Hyperlinks[0].Text == "footer-odd");
+                Assert.IsTrue(document.Footers.Odd.Hyperlinks[0].Uri.AbsoluteUri == "http://www.footer-odd.com/");
+
+                // Change the Hyperlinks and check that it has in fact changed.
+                document.Footers.Odd.Hyperlinks[0].Text = "somethingnew";
+                document.Footers.Odd.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
+                Assert.IsTrue(document.Footers.Odd.Hyperlinks[0].Text == "somethingnew");
+                Assert.IsTrue(document.Footers.Odd.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
+
+                Assert.IsTrue(document.Footers.Even.Hyperlinks.Count == 1);
+                Assert.IsTrue(document.Footers.Even.Hyperlinks[0].Text == "footer-even");
+                Assert.IsTrue(document.Footers.Even.Hyperlinks[0].Uri.AbsoluteUri == "http://www.footer-even.com/");
+
+                // Change the Hyperlinks and check that it has in fact changed.
+                document.Footers.Even.Hyperlinks[0].Text = "somethingnew";
+                document.Footers.Even.Hyperlinks[0].Uri = new Uri("http://www.google.com/");
+                Assert.IsTrue(document.Footers.Even.Hyperlinks[0].Text == "somethingnew");
+                Assert.IsTrue(document.Footers.Even.Hyperlinks[0].Uri.AbsoluteUri == "http://www.google.com/");
             }
         }
 
@@ -835,32 +820,32 @@ namespace UnitTests
                 Assert.IsTrue(p0.Text == "----google");
 
                 // Header first.
-                Paragraph p1 = document.Headers.first.InsertParagraph("----");
+                Paragraph p1 = document.Headers.First.InsertParagraph("----");
                 p1.AppendHyperlink(h);
                 Assert.IsTrue(p1.Text == "----google");
 
                 // Header odd.
-                Paragraph p2 = document.Headers.odd.InsertParagraph("----");
+                Paragraph p2 = document.Headers.Odd.InsertParagraph("----");
                 p2.AppendHyperlink(h);
                 Assert.IsTrue(p2.Text == "----google");
 
                 // Header even.
-                Paragraph p3 = document.Headers.even.InsertParagraph("----");
+                Paragraph p3 = document.Headers.Even.InsertParagraph("----");
                 p3.AppendHyperlink(h);
                 Assert.IsTrue(p3.Text == "----google");
 
                 // Footer first.
-                Paragraph p4 = document.Footers.first.InsertParagraph("----");
+                Paragraph p4 = document.Footers.First.InsertParagraph("----");
                 p4.AppendHyperlink(h);
                 Assert.IsTrue(p4.Text == "----google");
 
                 // Footer odd.
-                Paragraph p5 = document.Footers.odd.InsertParagraph("----");
+                Paragraph p5 = document.Footers.Odd.InsertParagraph("----");
                 p5.AppendHyperlink(h);
                 Assert.IsTrue(p5.Text == "----google");
 
                 // Footer even.
-                Paragraph p6 = document.Footers.even.InsertParagraph("----");
+                Paragraph p6 = document.Footers.Even.InsertParagraph("----");
                 p6.AppendHyperlink(h);
                 Assert.IsTrue(p6.Text == "----google");
 
@@ -882,7 +867,7 @@ namespace UnitTests
                 document.DifferentOddAndEvenPages = true;
 
                 // Add an Image to this document.
-                Novacode.Image img = document.AddImage(_directoryWithFiles + "purple.png");
+                Image img = document.AddImage(_directoryWithFiles + "purple.png");
 
                 // Create a Picture from this Image.
                 Picture pic = img.CreatePicture();
@@ -892,27 +877,27 @@ namespace UnitTests
                 p0.AppendPicture(pic);
 
                 // Header first.
-                Paragraph p1 = document.Headers.first.InsertParagraph();
+                Paragraph p1 = document.Headers.First.InsertParagraph();
                 p1.AppendPicture(pic);
 
                 // Header odd.
-                Paragraph p2 = document.Headers.odd.InsertParagraph();
+                Paragraph p2 = document.Headers.Odd.InsertParagraph();
                 p2.AppendPicture(pic);
 
                 // Header even.
-                Paragraph p3 = document.Headers.even.InsertParagraph();
+                Paragraph p3 = document.Headers.Even.InsertParagraph();
                 p3.AppendPicture(pic);
 
                 // Footer first.
-                Paragraph p4 = document.Footers.first.InsertParagraph();
+                Paragraph p4 = document.Footers.First.InsertParagraph();
                 p4.AppendPicture(pic);
 
                 // Footer odd.
-                Paragraph p5 = document.Footers.odd.InsertParagraph();
+                Paragraph p5 = document.Footers.Odd.InsertParagraph();
                 p5.AppendPicture(pic);
 
                 // Footer even.
-                Paragraph p6 = document.Footers.even.InsertParagraph();
+                Paragraph p6 = document.Footers.Even.InsertParagraph();
                 p6.AppendPicture(pic);
 
                 // Save the document.
@@ -930,27 +915,27 @@ namespace UnitTests
                 Picture picture = document.Paragraphs.First().Pictures.First();
 
                 // Move it into the first Header.
-                Header header_first = document.Headers.first;
+                Header header_first = document.Headers.First;
                 header_first.Paragraphs.First().AppendPicture(picture);
 
                 // Move it into the even Header.
-                Header header_even = document.Headers.even;
+                Header header_even = document.Headers.Even;
                 header_even.Paragraphs.First().AppendPicture(picture);
 
                 // Move it into the odd Header.
-                Header header_odd = document.Headers.odd;
+                Header header_odd = document.Headers.Odd;
                 header_odd.Paragraphs.First().AppendPicture(picture);
 
                 // Move it into the first Footer.
-                Footer footer_first = document.Footers.first;
+                Footer footer_first = document.Footers.First;
                 footer_first.Paragraphs.First().AppendPicture(picture);
 
                 // Move it into the even Footer.
-                Footer footer_even = document.Footers.even;
+                Footer footer_even = document.Footers.Even;
                 footer_even.Paragraphs.First().AppendPicture(picture);
 
                 // Move it into the odd Footer.
-                Footer footer_odd = document.Footers.odd;
+                Footer footer_odd = document.Footers.Odd;
                 footer_odd.Paragraphs.First().AppendPicture(picture);
 
                 // Save this as MovedPicture.docx
@@ -971,13 +956,13 @@ namespace UnitTests
                 Paragraph p1 = document.InsertParagraph("AC");
                 p1.InsertHyperlink(h); Assert.IsTrue(p1.Text == "linkAC");
                 p1.InsertHyperlink(h, p1.Text.Length); Assert.IsTrue(p1.Text == "linkAClink");
-                p1.InsertHyperlink(h, p1.Text.IndexOf("C")); Assert.IsTrue(p1.Text == "linkAlinkClink");
+                p1.InsertHyperlink(h, p1.Text.IndexOf("C", StringComparison.Ordinal)); Assert.IsTrue(p1.Text == "linkAlinkClink");
 
                 // Difficult
                 Paragraph p2 = document.InsertParagraph("\tA\tC\t");
                 p2.InsertHyperlink(h); Assert.IsTrue(p2.Text == "link\tA\tC\t");
                 p2.InsertHyperlink(h, p2.Text.Length); Assert.IsTrue(p2.Text == "link\tA\tC\tlink");
-                p2.InsertHyperlink(h, p2.Text.IndexOf("C")); Assert.IsTrue(p2.Text == "link\tA\tlinkC\tlink");
+                p2.InsertHyperlink(h, p2.Text.IndexOf("C", StringComparison.Ordinal)); Assert.IsTrue(p2.Text == "link\tA\tlinkC\tlink");
 
                 // Contrived
                 // Add a contrived Hyperlink to this document.
@@ -985,7 +970,7 @@ namespace UnitTests
                 Paragraph p3 = document.InsertParagraph("\tA\tC\t");
                 p3.InsertHyperlink(h2); Assert.IsTrue(p3.Text == "\tlink\t\tA\tC\t");
                 p3.InsertHyperlink(h2, p3.Text.Length); Assert.IsTrue(p3.Text == "\tlink\t\tA\tC\t\tlink\t");
-                p3.InsertHyperlink(h2, p3.Text.IndexOf("C")); Assert.IsTrue(p3.Text == "\tlink\t\tA\t\tlink\tC\t\tlink\t");
+                p3.InsertHyperlink(h2, p3.Text.IndexOf("C", StringComparison.Ordinal)); Assert.IsTrue(p3.Text == "\tlink\t\tA\t\tlink\tC\t\tlink\t");
             }
         }
 
@@ -1002,7 +987,7 @@ namespace UnitTests
                 Paragraph p1 = document.InsertParagraph("AC");
                 p1.InsertHyperlink(h); Assert.IsTrue(p1.Text == "linkAC");
                 p1.InsertHyperlink(h, p1.Text.Length); Assert.IsTrue(p1.Text == "linkAClink");
-                p1.InsertHyperlink(h, p1.Text.IndexOf("C")); Assert.IsTrue(p1.Text == "linkAlinkClink");
+                p1.InsertHyperlink(h, p1.Text.IndexOf("C", StringComparison.Ordinal)); Assert.IsTrue(p1.Text == "linkAlinkClink");
 
                 // Try and remove a Hyperlink using a negative index.
                 // This should throw an exception.
@@ -1065,7 +1050,7 @@ namespace UnitTests
                 var formatting = new Formatting();
                 formatting.FontColor = Color.Blue;
                 // IMPORTANT: default constructor of Formatting sets up language property - set it to NULL to be language independent
-                var desiredFormat = new Formatting() { Language = null, FontColor = Color.FromArgb(255, 0, 0), Highlight = Highlight.yellow };
+                var desiredFormat = new Formatting { Language = null, FontColor = Color.FromArgb(255, 0, 0), Highlight = Highlight.yellow };
                 var replaced = string.Empty;
                 foreach (var p in document.Paragraphs)
                 {
@@ -1079,7 +1064,7 @@ namespace UnitTests
                 Assert.AreEqual("New text highlighted with yellow", replaced);
 
                 // Removing red text with no other formatting (ExactMatch)
-                desiredFormat = new Formatting() { Language = null, FontColor = Color.FromArgb(255, 0, 0) };
+                desiredFormat = new Formatting { Language = null, FontColor = Color.FromArgb(255, 0, 0) };
                 var count = 0;
                 foreach (var p in document.Paragraphs)
                 {
@@ -1093,7 +1078,7 @@ namespace UnitTests
                 Assert.AreEqual(1, count);
 
                 // Removing just red text with any other formatting (SubsetMatch)
-                desiredFormat = new Formatting() { Language = null, FontColor = Color.FromArgb(255, 0, 0) };
+                desiredFormat = new Formatting { Language = null, FontColor = Color.FromArgb(255, 0, 0) };
                 count = 0;
                 foreach (var p in document.Paragraphs)
                 {
@@ -1121,7 +1106,7 @@ namespace UnitTests
                 Paragraph p1 = document.InsertParagraph("HelloWorld");
                 p1.RemoveText(0, 1); Assert.IsTrue(p1.Text == "elloWorld");
                 p1.RemoveText(p1.Text.Length - 1, 1); Assert.IsTrue(p1.Text == "elloWorl");
-                p1.RemoveText(p1.Text.IndexOf("o"), 1); Assert.IsTrue(p1.Text == "ellWorl");
+                p1.RemoveText(p1.Text.IndexOf("o", StringComparison.Ordinal), 1); Assert.IsTrue(p1.Text == "ellWorl");
 
                 // Try and remove text at an index greater than the last.
                 // This should throw an exception.
@@ -1152,7 +1137,7 @@ namespace UnitTests
                 Paragraph p2 = document.InsertParagraph("A\tB\tC");
                 p2.RemoveText(0, 1); Assert.IsTrue(p2.Text == "\tB\tC");
                 p2.RemoveText(p2.Text.Length - 1, 1); Assert.IsTrue(p2.Text == "\tB\t");
-                p2.RemoveText(p2.Text.IndexOf("B"), 1); Assert.IsTrue(p2.Text == "\t\t");
+                p2.RemoveText(p2.Text.IndexOf("B", StringComparison.Ordinal), 1); Assert.IsTrue(p2.Text == "\t\t");
                 p2.RemoveText(0, 1); Assert.IsTrue(p2.Text == "\t");
                 p2.RemoveText(0, 1); Assert.IsTrue(p2.Text == "");
 
@@ -1232,13 +1217,13 @@ namespace UnitTests
                 var deletedCount = document.RemoveTextInGivenFormat(formatting);
                 Assert.AreEqual(2, deletedCount);
 
-                deletedCount = document.RemoveTextInGivenFormat(new Formatting() { Highlight = Highlight.yellow, Language = null });
+                deletedCount = document.RemoveTextInGivenFormat(new Formatting { Highlight = Highlight.yellow, Language = null });
                 Assert.AreEqual(2, deletedCount);
 
-                deletedCount = document.RemoveTextInGivenFormat(new Formatting() { Highlight = Highlight.blue, Language = null, FontColor = Color.FromArgb(0, 255, 0) });
+                deletedCount = document.RemoveTextInGivenFormat(new Formatting { Highlight = Highlight.blue, Language = null, FontColor = Color.FromArgb(0, 255, 0) });
                 Assert.AreEqual(1, deletedCount);
 
-                deletedCount = document.RemoveTextInGivenFormat(new Formatting() { Language = null, FontColor = Color.FromArgb(123, 123, 123) }, MatchFormattingOptions.ExactMatch);
+                deletedCount = document.RemoveTextInGivenFormat(new Formatting { Language = null, FontColor = Color.FromArgb(123, 123, 123) }, MatchFormattingOptions.ExactMatch);
                 Assert.AreEqual(2, deletedCount);
             }
         }
@@ -1256,7 +1241,7 @@ namespace UnitTests
                 Paragraph p1 = document.InsertParagraph("HelloWorld");
                 p1.InsertText(0, "-"); Assert.IsTrue(p1.Text == "-HelloWorld");
                 p1.InsertText(p1.Text.Length, "-"); Assert.IsTrue(p1.Text == "-HelloWorld-");
-                p1.InsertText(p1.Text.IndexOf("W"), "-"); Assert.IsTrue(p1.Text == "-Hello-World-");
+                p1.InsertText(p1.Text.IndexOf("W", StringComparison.Ordinal), "-"); Assert.IsTrue(p1.Text == "-Hello-World-");
 
                 // Try and insert text at an index greater than the last + 1.
                 // This should throw an exception.
@@ -1287,8 +1272,8 @@ namespace UnitTests
                 Paragraph p2 = document.InsertParagraph("A\tB\tC");
                 p2.InsertText(0, "-"); Assert.IsTrue(p2.Text == "-A\tB\tC");
                 p2.InsertText(p2.Text.Length, "-"); Assert.IsTrue(p2.Text == "-A\tB\tC-");
-                p2.InsertText(p2.Text.IndexOf("B"), "-"); Assert.IsTrue(p2.Text == "-A\t-B\tC-");
-                p2.InsertText(p2.Text.IndexOf("C"), "-"); Assert.IsTrue(p2.Text == "-A\t-B\t-C-");
+                p2.InsertText(p2.Text.IndexOf("B", StringComparison.Ordinal), "-"); Assert.IsTrue(p2.Text == "-A\t-B\tC-");
+                p2.InsertText(p2.Text.IndexOf("C", StringComparison.Ordinal), "-"); Assert.IsTrue(p2.Text == "-A\t-B\t-C-");
 
                 // Contrived 1
                 //<p>
@@ -1314,8 +1299,8 @@ namespace UnitTests
 
                 p3.InsertText(0, "-"); Assert.IsTrue(p3.Text == "-ABC");
                 p3.InsertText(p3.Text.Length, "-"); Assert.IsTrue(p3.Text == "-ABC-");
-                p3.InsertText(p3.Text.IndexOf("B"), "-"); Assert.IsTrue(p3.Text == "-A-BC-");
-                p3.InsertText(p3.Text.IndexOf("C"), "-"); Assert.IsTrue(p3.Text == "-A-B-C-");
+                p3.InsertText(p3.Text.IndexOf("B", StringComparison.Ordinal), "-"); Assert.IsTrue(p3.Text == "-A-BC-");
+                p3.InsertText(p3.Text.IndexOf("C", StringComparison.Ordinal), "-"); Assert.IsTrue(p3.Text == "-A-B-C-");
 
                 // Contrived 2
                 //<p>
@@ -1341,8 +1326,8 @@ namespace UnitTests
 
                 p4.InsertText(0, "\t"); Assert.IsTrue(p4.Text == "\tABC");
                 p4.InsertText(p4.Text.Length, "\t"); Assert.IsTrue(p4.Text == "\tABC\t");
-                p4.InsertText(p4.Text.IndexOf("B"), "\t"); Assert.IsTrue(p4.Text == "\tA\tBC\t");
-                p4.InsertText(p4.Text.IndexOf("C"), "\t"); Assert.IsTrue(p4.Text == "\tA\tB\tC\t");
+                p4.InsertText(p4.Text.IndexOf("B", StringComparison.Ordinal), "\t"); Assert.IsTrue(p4.Text == "\tA\tBC\t");
+                p4.InsertText(p4.Text.IndexOf("C", StringComparison.Ordinal), "\t"); Assert.IsTrue(p4.Text == "\tA\tB\tC\t");
             }
         }
 
@@ -1459,13 +1444,13 @@ namespace UnitTests
                     document.ApplyTemplate(_directoryWithFiles + "Template.dotx");
                     document.Save();
 
-                    Header firstHeader = document.Headers.first;
-                    Header oddHeader = document.Headers.odd;
-                    Header evenHeader = document.Headers.even;
+                    Header firstHeader = document.Headers.First;
+                    Header oddHeader = document.Headers.Odd;
+                    Header evenHeader = document.Headers.Even;
 
-                    Footer firstFooter = document.Footers.first;
-                    Footer oddFooter = document.Footers.odd;
-                    Footer evenFooter = document.Footers.even;
+                    Footer firstFooter = document.Footers.First;
+                    Footer oddFooter = document.Footers.Odd;
+                    Footer evenFooter = document.Footers.Even;
 
                     Assert.IsTrue(firstHeader.Paragraphs.Count == 1, "More than one paragraph in header.");
                     Assert.IsTrue(firstHeader.Paragraphs[0].Text.Equals("First page header"), "Header isn't retrieved from template.");
@@ -1518,7 +1503,7 @@ namespace UnitTests
             using (DocX document = DocX.Create("Test.docx"))
             {
                 document.AddHeaders();
-                Paragraph p1 = document.Headers.first.InsertParagraph("Test");
+                Paragraph p1 = document.Headers.First.InsertParagraph("Test");
 
                 Assert.IsTrue(p1.ParentContainer == ContainerType.Header);
             }
@@ -1998,10 +1983,10 @@ namespace UnitTests
         {
             using (DocX document = DocX.Load(_directoryWithFiles + "FontFormat.docx"))
             {
-                var underlinedTextFormatting = document.Paragraphs[0].MagicText[0].formatting;
-                var boldTextFormatting = document.Paragraphs[0].MagicText[2].formatting;
-                var italicTextFormatting = document.Paragraphs[0].MagicText[4].formatting;
-                var boldItalicUnderlineTextFormatting = document.Paragraphs[0].MagicText[6].formatting;
+                var underlinedTextFormatting = document.Paragraphs[0].MagicText[0].Formatting;
+                var boldTextFormatting = document.Paragraphs[0].MagicText[2].Formatting;
+                var italicTextFormatting = document.Paragraphs[0].MagicText[4].Formatting;
+                var boldItalicUnderlineTextFormatting = document.Paragraphs[0].MagicText[6].Formatting;
 
                 Assert.IsTrue(boldTextFormatting.Bold);
                 Assert.IsTrue(italicTextFormatting.Italic);
@@ -2023,10 +2008,10 @@ namespace UnitTests
                 p.Append("This is bold.").Bold().Append("This is underlined.").UnderlineStyle(UnderlineStyle.singleLine).
                 Append("This is italic.").Italic().Append("This is boldItalicUnderlined").Italic().Bold().UnderlineStyle(UnderlineStyle.singleLine);
 
-                var boldTextFormatting = document.Paragraphs[0].MagicText[0].formatting;
-                var underlinedTextFormatting = document.Paragraphs[0].MagicText[1].formatting;
-                var italicTextFormatting = document.Paragraphs[0].MagicText[2].formatting;
-                var boldItalicUnderlineTextFormatting = document.Paragraphs[0].MagicText[3].formatting;
+                var boldTextFormatting = document.Paragraphs[0].MagicText[0].Formatting;
+                var underlinedTextFormatting = document.Paragraphs[0].MagicText[1].Formatting;
+                var italicTextFormatting = document.Paragraphs[0].MagicText[2].Formatting;
+                var boldItalicUnderlineTextFormatting = document.Paragraphs[0].MagicText[3].Formatting;
 
                 Assert.IsTrue(boldTextFormatting.Bold);
                 Assert.IsTrue(italicTextFormatting.Italic);
@@ -2079,7 +2064,7 @@ namespace UnitTests
 
             p.Append("Hello World").Font(new FontFamily("Symbol"));
 
-            Assert.AreEqual(p.MagicText[0].formatting.FontFamily.Name, "Symbol");
+            Assert.AreEqual(p.MagicText[0].Formatting.FontFamily.Name, "Symbol");
 
             document.Save();
           }
@@ -2675,7 +2660,7 @@ namespace UnitTests
             using (var document = DocX.Create("Bookmark validate.docx"))
             {
                 document.AddHeaders();
-                var p = document.Headers.first.InsertParagraph("Here's a bookmark!");
+                var p = document.Headers.First.InsertParagraph("Here's a bookmark!");
                 const string bookmarkName = "Team Rubberduck";
 
                 p.AppendBookmark(bookmarkName);
@@ -2704,7 +2689,7 @@ namespace UnitTests
             using (var document = DocX.Create("Bookmark validate.docx"))
             {
                 document.AddFooters();
-                var p = document.Footers.first.InsertParagraph("Here's a bookmark!");
+                var p = document.Footers.First.InsertParagraph("Here's a bookmark!");
                 const string bookmarkName = "Team Rubberduck";
 
                 p.AppendBookmark(bookmarkName);
@@ -2719,7 +2704,7 @@ namespace UnitTests
             using (var document = DocX.Create("Bookmark validate.docx"))
             {
                 document.AddHeaders();
-                var p = document.Headers.first.InsertParagraph("Here's a bookmark!");
+                var p = document.Headers.First.InsertParagraph("Here's a bookmark!");
 
                 p.AppendBookmark("Not in search");
 

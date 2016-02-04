@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
-using System.IO.Packaging;
-using System.IO;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Globalization;
-using System.Collections.ObjectModel;
+using System.IO;
+using System.IO.Packaging;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace Novacode
 {
@@ -55,26 +55,26 @@ namespace Novacode
              * Get the tcPr (table cell properties) element for the first cell in this merge,
             * null will be returned if no such element exists.
              */
-            XElement start_tcPr = null;
+            XElement startTcPr;
             if(columnIndex > Rows[startRow].Cells.Count)
-                start_tcPr = Rows[startRow].Cells[Rows[startRow].Cells.Count - 1].Xml.Element(XName.Get("tcPr", DocX.w.NamespaceName));
+                startTcPr = Rows[startRow].Cells[Rows[startRow].Cells.Count - 1].Xml.Element(XName.Get("tcPr", DocX.w.NamespaceName));
             else
-                start_tcPr = Rows[startRow].Cells[columnIndex].Xml.Element(XName.Get("tcPr", DocX.w.NamespaceName));
-            if (start_tcPr == null)
+                startTcPr = Rows[startRow].Cells[columnIndex].Xml.Element(XName.Get("tcPr", DocX.w.NamespaceName));
+            if (startTcPr == null)
             {
                 Rows[startRow].Cells[columnIndex].Xml.SetElementValue(XName.Get("tcPr", DocX.w.NamespaceName), string.Empty);
-                start_tcPr = Rows[startRow].Cells[columnIndex].Xml.Element(XName.Get("tcPr", DocX.w.NamespaceName));
+                startTcPr = Rows[startRow].Cells[columnIndex].Xml.Element(XName.Get("tcPr", DocX.w.NamespaceName));
             }
 
             /* 
               * Get the gridSpan element of this row,
               * null will be returned if no such element exists.
               */
-            XElement start_vMerge = start_tcPr.Element(XName.Get("vMerge", DocX.w.NamespaceName));
+            XElement start_vMerge = startTcPr.Element(XName.Get("vMerge", DocX.w.NamespaceName));
             if (start_vMerge == null)
             {
-                start_tcPr.SetElementValue(XName.Get("vMerge", DocX.w.NamespaceName), string.Empty);
-                start_vMerge = start_tcPr.Element(XName.Get("vMerge", DocX.w.NamespaceName));
+                startTcPr.SetElementValue(XName.Get("vMerge", DocX.w.NamespaceName), string.Empty);
+                start_vMerge = startTcPr.Element(XName.Get("vMerge", DocX.w.NamespaceName));
             }
 
             start_vMerge.SetAttributeValue(XName.Get("val", DocX.w.NamespaceName), "restart");
@@ -197,7 +197,7 @@ namespace Novacode
 
         public void SetWidths(float[] widths)
         {
-            this.ColumnWidthsValue = widths;
+            ColumnWidthsValue = widths;
             //set widths for existing rows
             foreach (var r in Rows)
             {
@@ -303,7 +303,7 @@ namespace Novacode
                     c.Width = -1;
 
             // set fitting to fixed; this will add/set additional table properties
-            this.AutoFit = AutoFit.Fixed;
+            AutoFit = AutoFit.Fixed;
         }
 
 
@@ -321,12 +321,10 @@ namespace Novacode
 
                 // get col properties
                 var cols = grid.Elements(XName.Get("gridCol", DocX.w.NamespaceName));
-                if (cols == null) return null;
 
-                String value = String.Empty;
                 foreach (var col in cols)
                 {
-                    value = col.GetAttribute(XName.Get("w", DocX.w.NamespaceName));
+                    var value = col.GetAttribute(XName.Get("w", DocX.w.NamespaceName));
                     widths.Add(Convert.ToDouble(value));
                 }
                 return widths;
@@ -385,8 +383,8 @@ namespace Novacode
             : base(document, xml)
         {
             autofit = AutoFit.ColumnWidth;
-            this.Xml = xml;
-            this.mainPart = document.mainPart;
+            Xml = xml;
+            mainPart = document.mainPart;
 
             XElement properties = xml.Element(XName.Get("tblPr", DocX.w.NamespaceName));
 
@@ -439,7 +437,7 @@ namespace Novacode
             set
             {
                 _customTableDesignName = value;
-                this.Design = TableDesign.Custom;
+                Design = TableDesign.Custom;
             }
 
             get
@@ -1075,9 +1073,6 @@ namespace Novacode
                             break;
                         case TableDesign.ColorfulGridAccent6:
                             val.Value = "ColorfulGrid-Accent6";
-                            break;
-
-                        default:
                             break;
                     }
                 }
@@ -2226,7 +2221,7 @@ namespace Novacode
                         {
                             XAttribute val = gridSpan.Attribute(XName.Get("val", DocX.w.NamespaceName));
 
-                            int value = 0;
+                            int value;
                             if (val != null)
                                 if (int.TryParse(val.Value, out value))
                                     gridSpanSum += value - 1;
@@ -2287,7 +2282,7 @@ namespace Novacode
             : base(document, xml)
         {
             this.table = table;
-            this.mainPart = table.mainPart;
+            mainPart = table.mainPart;
         }
 
         /// <summary>
@@ -2423,10 +2418,7 @@ namespace Novacode
 				{
 					return false;
 				}
-				else
-				{
-					return true;
-				}
+			    return true;
 			}
 			set
 			{
@@ -2487,7 +2479,7 @@ namespace Novacode
 	                	trPr.SetElementValue(XName.Get("cantSplit", DocX.w.NamespaceName), string.Empty);
                 }
         		
-        		if (value == true)
+        		if (value)
         		{
         			XElement trPr = Xml.Element(XName.Get("trPr", DocX.w.NamespaceName));
         			if (trPr != null)
@@ -2582,7 +2574,7 @@ namespace Novacode
             : base(document, xml)
         {
             this.row = row;
-            this.mainPart = row.mainPart;
+            mainPart = row.mainPart;
         }
 
         public override ReadOnlyCollection<Paragraph> Paragraphs
@@ -3648,23 +3640,14 @@ namespace Novacode
                 XElement tcPr = Xml.Element(XName.Get("tcPr", DocX.w.NamespaceName));
                 if (tcPr == null)
                     return Color.Empty;
-                else
-                {
-                    XElement shd = tcPr.Element(XName.Get("shd", DocX.w.NamespaceName));
-                    if (shd == null)
-                        return Color.Empty;
-                    else
-                    {
-                        XAttribute fill = shd.Attribute(XName.Get("fill", DocX.w.NamespaceName));
-                        if (fill == null)
-                            return Color.Empty;
-                        else
-                        {
-                            int argb = Int32.Parse(fill.Value.Replace("#", ""), NumberStyles.HexNumber);
-                            return Color.FromArgb(argb);
-                        }
-                    }
-                }
+                XElement shd = tcPr.Element(XName.Get("shd", DocX.w.NamespaceName));
+                if (shd == null)
+                    return Color.Empty;
+                XAttribute fill = shd.Attribute(XName.Get("fill", DocX.w.NamespaceName));
+                if (fill == null)
+                    return Color.Empty;
+                int argb = Int32.Parse(fill.Value.Replace("#", ""), NumberStyles.HexNumber);
+                return Color.FromArgb(argb);
             }
 
             set

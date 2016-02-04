@@ -12,10 +12,10 @@ namespace Novacode
 
   public enum SectionBreakType
   {
-    defaultNextPage,
-    evenPage,
-    oddPage,
-    continuous
+    DefaultNextPage,
+    EvenPage,
+    OddPage,
+    Continuous
   }
 
 
@@ -134,13 +134,13 @@ namespace Novacode
     Top,
     Center,
     Bottom
-  };
+  }
 
   public enum Orientation
   {
     Portrait,
     Landscape
-  };
+  }
 
   public enum XmlDocument
   {
@@ -151,13 +151,13 @@ namespace Novacode
     FooterOdd,
     FooterEven,
     FooterFirst
-  };
+  }
 
   public enum MatchFormattingOptions
   {
     ExactMatch,
     SubsetMatch
-  };
+  }
 
   public enum Script
   {
@@ -184,7 +184,7 @@ namespace Novacode
     lightGray,
     black,
     none
-  };
+  }
 
   public enum UnderlineStyle
   {
@@ -205,15 +205,15 @@ namespace Novacode
       dashLongHeavy = 27,
       dashLong = 39,
       wavyDouble = 43,
-      wavyHeavy = 55,
-  };
+      wavyHeavy = 55
+  }
 
   public enum StrikeThrough
   {
     none,
     strike,
     doubleStrike
-  };
+  }
 
   public enum Misc
   {
@@ -223,7 +223,7 @@ namespace Novacode
     outlineShadow,
     emboss,
     engrave
-  };
+  }
 
   /// <summary>
   /// Change the caps style of text, for use with Append and AppendLine.
@@ -244,7 +244,7 @@ namespace Novacode
     /// Small caps, make all characters capital but with a small font size.
     /// </summary>
     smallCaps
-  };
+  }
 
   /// <summary>
   /// Designs\Styles that can be applied to a table.
@@ -353,7 +353,7 @@ namespace Novacode
     ColorfulGridAccent5,
     ColorfulGridAccent6,
     None
-  };
+  }
 
   /// <summary>
   /// How a Table should auto resize.
@@ -378,7 +378,7 @@ namespace Novacode
     ///  Autofit to Fixed column width
     /// </summary>
     Fixed
-  };
+  }
 
   public enum RectangleShapes
   {
@@ -391,7 +391,7 @@ namespace Novacode
     round1Rect,
     round2SameRect,
     round2DiagRect
-  };
+  }
 
   public enum BasicShapes
   {
@@ -436,7 +436,7 @@ namespace Novacode
     rightBracket,
     leftBrace,
     rightBrace
-  };
+  }
 
   public enum BlockArrowShapes
   {
@@ -467,7 +467,7 @@ namespace Novacode
     leftRightArrowCallout,
     quadArrowCallout,
     circularArrow
-  };
+  }
 
   public enum EquationShapes
   {
@@ -477,7 +477,7 @@ namespace Novacode
     mathDivide,
     mathEqual,
     mathNotEqual
-  };
+  }
 
   public enum FlowchartShapes
   {
@@ -509,7 +509,7 @@ namespace Novacode
     flowChartMagneticDisk,
     flowChartMagneticDrum,
     flowChartDisplay
-  };
+  }
 
   public enum StarAndBannerShapes
   {
@@ -533,7 +533,7 @@ namespace Novacode
     horizontalScroll,
     wave,
     doubleWave
-  };
+  }
 
   public enum CalloutShapes
   {
@@ -553,7 +553,7 @@ namespace Novacode
     accentBorderCallout1,
     accentBorderCallout2,
     accentBorderCallout3
-  };
+  }
 
   /// <summary>
   /// Text alignment of a Paragraph.
@@ -579,13 +579,13 @@ namespace Novacode
     /// (Justified) Align Paragraph to both the left and right margins, adding extra space between content as necessary.
     /// </summary>
     both
-  };
+  }
 
   public enum Direction
   {
     LeftToRight,
     RightToLeft
-  };
+  }
 
   /// <summary>
   /// Paragraph edit types
@@ -647,7 +647,7 @@ namespace Novacode
     /// <summary>
     /// System.String
     /// </summary>
-    DelText,
+    DelText
   }
   public enum LineSpacingType
   {
@@ -690,7 +690,7 @@ namespace Novacode
       Heading8,
 
       [Description("Heading9")]
-      Heading9,
+      Heading9
 
 
       /*		 
@@ -741,7 +741,7 @@ namespace Novacode
   {
       btLr,
       right
-  };
+  }
 
     /// <summary>
     /// Represents the switches set on a TOC.
@@ -781,7 +781,7 @@ namespace Novacode
         [Description("\\x")]
         X = 1 << 14,
         [Description("\\z")]
-        Z = 1 << 15,
+        Z = 1 << 15
     }
 
 }

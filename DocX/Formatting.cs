@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Linq;
-using System.Xml.Linq;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
+using System.Xml.Linq;
+
 namespace Novacode
 {
     /// <summary>
@@ -10,43 +11,43 @@ namespace Novacode
     /// </summary>
     public class Formatting : IComparable
     {
-        private XElement rPr;
-        private bool hidden;
-        private bool bold;
-        private bool italic;
-        private StrikeThrough strikethrough;
-        private Script script;
-        private Highlight highlight;
-        private double? size;
-        private Color? fontColor;
-        private Color? underlineColor;
-        private UnderlineStyle underlineStyle;
-        private Misc misc;
-        private CapsStyle capsStyle;
-        private FontFamily fontFamily;
-        private int? percentageScale;
-        private int? kerning;
-        private int? position;
-        private double? spacing;
+        private XElement _rPr;
+        private bool _hidden;
+        private bool _bold;
+        private bool _italic;
+        private StrikeThrough _strikethrough;
+        private Script _script;
+        private Highlight _highlight;
+        private double? _size;
+        private Color? _fontColor;
+        private Color? _underlineColor;
+        private UnderlineStyle _underlineStyle;
+        private Misc _misc;
+        private CapsStyle _capsStyle;
+        private FontFamily _fontFamily;
+        private int? _percentageScale;
+        private int? _kerning;
+        private int? _position;
+        private double? _spacing;
 
-        private CultureInfo language;
+        private CultureInfo _language;
 
         /// <summary>
         /// A text formatting.
         /// </summary>
         public Formatting()
         {
-            capsStyle = CapsStyle.none;
-            strikethrough = StrikeThrough.none;
-            script = Script.none;
-            highlight = Highlight.none;
-            underlineStyle = UnderlineStyle.none;
-            misc = Misc.none;
+            _capsStyle = CapsStyle.none;
+            _strikethrough = StrikeThrough.none;
+            _script = Script.none;
+            _highlight = Highlight.none;
+            _underlineStyle = UnderlineStyle.none;
+            _misc = Misc.none;
 
             // Use current culture by default
-            language = CultureInfo.CurrentCulture;
+            _language = CultureInfo.CurrentCulture;
 
-            rPr = new XElement(XName.Get("rPr", DocX.w.NamespaceName));
+            _rPr = new XElement(XName.Get("rPr", DocX.w.NamespaceName));
         }
 
         /// <summary>
@@ -56,12 +57,12 @@ namespace Novacode
         { 
             get 
             { 
-                return language; 
+                return _language; 
             } 
             
             set 
             { 
-                language = value; 
+                _language = value; 
             } 
         }
 
@@ -115,16 +116,15 @@ namespace Novacode
                         try
                         {
                             string color = option.GetAttribute(XName.Get("val", DocX.w.NamespaceName));
-                            formatting.FontColor = System.Drawing.ColorTranslator.FromHtml(string.Format("#{0}", color));
+                            formatting.FontColor = ColorTranslator.FromHtml(string.Format("#{0}", color));
                         }
                         catch { }
                         break;
-                    case "vanish": formatting.hidden = true; break;
+                    case "vanish": formatting._hidden = true; break;
                     case "b": formatting.Bold = true; break;
                     case "i": formatting.Italic = true; break;
                     case "u": formatting.UnderlineStyle = HelperFunctions.GetUnderlineStyle(option.GetAttribute(XName.Get("val", DocX.w.NamespaceName)));
                               break;
-                    default: break;
                 }
             }
 
@@ -136,170 +136,168 @@ namespace Novacode
         {
             get
             {
-                rPr = new XElement(XName.Get("rPr", DocX.w.NamespaceName));
+                _rPr = new XElement(XName.Get("rPr", DocX.w.NamespaceName));
 
-                if (language != null)
-                    rPr.Add(new XElement(XName.Get("lang", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), language.Name)));
+                if (_language != null)
+                    _rPr.Add(new XElement(XName.Get("lang", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), _language.Name)));
                 
-                if(spacing.HasValue)
-                    rPr.Add(new XElement(XName.Get("spacing", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), spacing.Value * 20)));
+                if(_spacing.HasValue)
+                    _rPr.Add(new XElement(XName.Get("spacing", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), _spacing.Value * 20)));
 
-                if(position.HasValue)
-                    rPr.Add(new XElement(XName.Get("position", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), position.Value * 2)));                   
+                if(_position.HasValue)
+                    _rPr.Add(new XElement(XName.Get("position", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), _position.Value * 2)));                   
 
-                if (kerning.HasValue)
-                    rPr.Add(new XElement(XName.Get("kern", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), kerning.Value * 2)));                   
+                if (_kerning.HasValue)
+                    _rPr.Add(new XElement(XName.Get("kern", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), _kerning.Value * 2)));                   
 
-                if (percentageScale.HasValue)
-                    rPr.Add(new XElement(XName.Get("w", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), percentageScale)));
+                if (_percentageScale.HasValue)
+                    _rPr.Add(new XElement(XName.Get("w", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), _percentageScale)));
 
-                if (fontFamily != null)
+                if (_fontFamily != null)
                 {
-                    rPr.Add
+                    _rPr.Add
                     (
                         new XElement
                         (
                             XName.Get("rFonts", DocX.w.NamespaceName), 
-                            new XAttribute(XName.Get("ascii", DocX.w.NamespaceName), fontFamily.Name),
-                            new XAttribute(XName.Get("hAnsi", DocX.w.NamespaceName), fontFamily.Name), // Added by Maurits Elbers to support non-standard characters. See http://docx.codeplex.com/Thread/View.aspx?ThreadId=70097&ANCHOR#Post453865
-                            new XAttribute(XName.Get("cs", DocX.w.NamespaceName), fontFamily.Name)    // Added by Maurits Elbers to support non-standard characters. See http://docx.codeplex.com/Thread/View.aspx?ThreadId=70097&ANCHOR#Post453865
+                            new XAttribute(XName.Get("ascii", DocX.w.NamespaceName), _fontFamily.Name),
+                            new XAttribute(XName.Get("hAnsi", DocX.w.NamespaceName), _fontFamily.Name), // Added by Maurits Elbers to support non-standard characters. See http://docx.codeplex.com/Thread/View.aspx?ThreadId=70097&ANCHOR#Post453865
+                            new XAttribute(XName.Get("cs", DocX.w.NamespaceName), _fontFamily.Name)    // Added by Maurits Elbers to support non-standard characters. See http://docx.codeplex.com/Thread/View.aspx?ThreadId=70097&ANCHOR#Post453865
                         )
                     );
                 }
 
-                if(hidden)
-                    rPr.Add(new XElement(XName.Get("vanish", DocX.w.NamespaceName)));
+                if(_hidden)
+                    _rPr.Add(new XElement(XName.Get("vanish", DocX.w.NamespaceName)));
 
-                if (bold)
-                    rPr.Add(new XElement(XName.Get("b", DocX.w.NamespaceName)));
+                if (_bold)
+                    _rPr.Add(new XElement(XName.Get("b", DocX.w.NamespaceName)));
 
-                if (italic)
-                    rPr.Add(new XElement(XName.Get("i", DocX.w.NamespaceName)));
+                if (_italic)
+                    _rPr.Add(new XElement(XName.Get("i", DocX.w.NamespaceName)));
 
-                switch (underlineStyle)
+                switch (_underlineStyle)
                 {
                     case UnderlineStyle.none:
                         break;
                     case UnderlineStyle.singleLine:
-                        rPr.Add(new XElement(XName.Get("u", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), "single")));
+                        _rPr.Add(new XElement(XName.Get("u", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), "single")));
                         break;
                     case UnderlineStyle.doubleLine:
-                        rPr.Add(new XElement(XName.Get("u", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), "double")));
+                        _rPr.Add(new XElement(XName.Get("u", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), "double")));
                         break;
                     default:
-                        rPr.Add(new XElement(XName.Get("u", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), underlineStyle.ToString())));
+                        _rPr.Add(new XElement(XName.Get("u", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), _underlineStyle.ToString())));
                         break;
                 }
 
-                if(underlineColor.HasValue)
+                if(_underlineColor.HasValue)
                 {
                     // If an underlineColor has been set but no underlineStyle has been set
-                    if (underlineStyle == UnderlineStyle.none)
+                    if (_underlineStyle == UnderlineStyle.none)
                     {
                         // Set the underlineStyle to the default
-                        underlineStyle = UnderlineStyle.singleLine;
-                        rPr.Add(new XElement(XName.Get("u", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), "single")));
+                        _underlineStyle = UnderlineStyle.singleLine;
+                        _rPr.Add(new XElement(XName.Get("u", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), "single")));
                     }
 
-                    rPr.Element(XName.Get("u", DocX.w.NamespaceName)).Add(new XAttribute(XName.Get("color", DocX.w.NamespaceName), underlineColor.Value.ToHex()));
+                    _rPr.Element(XName.Get("u", DocX.w.NamespaceName)).Add(new XAttribute(XName.Get("color", DocX.w.NamespaceName), _underlineColor.Value.ToHex()));
                 }
 
-                switch (strikethrough)
+                switch (_strikethrough)
                 {
                     case StrikeThrough.none:
                         break;
                     case StrikeThrough.strike:
-                        rPr.Add(new XElement(XName.Get("strike", DocX.w.NamespaceName)));
+                        _rPr.Add(new XElement(XName.Get("strike", DocX.w.NamespaceName)));
                         break;
                     case StrikeThrough.doubleStrike:
-                        rPr.Add(new XElement(XName.Get("dstrike", DocX.w.NamespaceName)));
-                        break;
-                    default:
+                        _rPr.Add(new XElement(XName.Get("dstrike", DocX.w.NamespaceName)));
                         break;
                 }
                   
-                switch (script)
+                switch (_script)
                 {
                     case Script.none:
                         break;
                     default:
-                        rPr.Add(new XElement(XName.Get("vertAlign", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), script.ToString())));
+                        _rPr.Add(new XElement(XName.Get("vertAlign", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), _script.ToString())));
                         break;
                 }
 
-                if (size.HasValue)
+                if (_size.HasValue)
                 {
-                    rPr.Add(new XElement(XName.Get("sz", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), (size * 2).ToString())));
-                    rPr.Add(new XElement(XName.Get("szCs", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), (size * 2).ToString())));
+                    _rPr.Add(new XElement(XName.Get("sz", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), (_size * 2).ToString())));
+                    _rPr.Add(new XElement(XName.Get("szCs", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), (_size * 2).ToString())));
                 }
 
-                if(fontColor.HasValue)
-                    rPr.Add(new XElement(XName.Get("color", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), fontColor.Value.ToHex())));
+                if(_fontColor.HasValue)
+                    _rPr.Add(new XElement(XName.Get("color", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), _fontColor.Value.ToHex())));
 
-                switch (highlight)
+                switch (_highlight)
                 {
                     case Highlight.none:
                         break;
                     default:
-                        rPr.Add(new XElement(XName.Get("highlight", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), highlight.ToString())));
+                        _rPr.Add(new XElement(XName.Get("highlight", DocX.w.NamespaceName), new XAttribute(XName.Get("val", DocX.w.NamespaceName), _highlight.ToString())));
                         break;
                 }
 
-                switch (capsStyle)
+                switch (_capsStyle)
                 {
                     case CapsStyle.none:
                         break;
                     default:
-                        rPr.Add(new XElement(XName.Get(capsStyle.ToString(), DocX.w.NamespaceName)));
+                        _rPr.Add(new XElement(XName.Get(_capsStyle.ToString(), DocX.w.NamespaceName)));
                         break;
                 }
 
-                switch (misc)
+                switch (_misc)
                 {
                     case Misc.none:
                         break;
                     case Misc.outlineShadow:
-                        rPr.Add(new XElement(XName.Get("outline", DocX.w.NamespaceName)));
-                        rPr.Add(new XElement(XName.Get("shadow", DocX.w.NamespaceName)));
+                        _rPr.Add(new XElement(XName.Get("outline", DocX.w.NamespaceName)));
+                        _rPr.Add(new XElement(XName.Get("shadow", DocX.w.NamespaceName)));
                         break;
                     case Misc.engrave:
-                        rPr.Add(new XElement(XName.Get("imprint", DocX.w.NamespaceName)));
+                        _rPr.Add(new XElement(XName.Get("imprint", DocX.w.NamespaceName)));
                         break;
                     default:
-                        rPr.Add(new XElement(XName.Get(misc.ToString(), DocX.w.NamespaceName)));
+                        _rPr.Add(new XElement(XName.Get(_misc.ToString(), DocX.w.NamespaceName)));
                         break;
                 }
 
-                return rPr;
+                return _rPr;
             }
         }
 
         /// <summary>
         /// This formatting will apply Bold.
         /// </summary>
-        public bool Bold { get { return bold; } set { bold = value;} }
+        public bool Bold { get { return _bold; } set { _bold = value;} }
 
         /// <summary>
         /// This formatting will apply Italic.
         /// </summary>
-        public bool Italic { get { return italic; } set { italic = value; } }
+        public bool Italic { get { return _italic; } set { _italic = value; } }
 
         /// <summary>
         /// This formatting will apply StrickThrough.
         /// </summary>
-        public StrikeThrough StrikeThrough { get { return strikethrough; } set { strikethrough = value; } }
+        public StrikeThrough StrikeThrough { get { return _strikethrough; } set { _strikethrough = value; } }
 
         /// <summary>
         /// The script that this formatting should be, normal, superscript or subscript.
         /// </summary>
-        public Script Script { get { return script; } set { script = value; } }
+        public Script Script { get { return _script; } set { _script = value; } }
         
         /// <summary>
         /// The Size of this text, must be between 0 and 1638.
         /// </summary>
         public double? Size 
         { 
-            get { return size; } 
+            get { return _size; } 
             
             set 
             { 
@@ -308,7 +306,7 @@ namespace Novacode
                 if (temp - (int)temp == 0)
                 {
                     if(value > 0 && value < 1639)
-                        size = value;
+                        _size = value;
                     else
                         throw new ArgumentException("Size", "Value must be in the range 0 - 1638");
                 }
@@ -323,12 +321,12 @@ namespace Novacode
         /// </summary>
         public int? PercentageScale
         { 
-            get { return percentageScale; } 
+            get { return _percentageScale; } 
             
             set 
             {
                 if ((new int?[] { 200, 150, 100, 90, 80, 66, 50, 33 }).Contains(value))
-                    percentageScale = value; 
+                    _percentageScale = value; 
                 else
                     throw new ArgumentOutOfRangeException("PercentageScale", "Value must be one of the following: 200, 150, 100, 90, 80, 66, 50 or 33");
             } 
@@ -339,12 +337,12 @@ namespace Novacode
         /// </summary>
         public int? Kerning 
         { 
-            get { return kerning; } 
+            get { return _kerning; } 
             
             set 
             { 
                 if(new int?[] {8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72}.Contains(value))
-                    kerning = value; 
+                    _kerning = value; 
                 else
                     throw new ArgumentOutOfRangeException("Kerning", "Value must be one of the following: 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48 or 72");
             } 
@@ -355,12 +353,12 @@ namespace Novacode
         /// </summary>
         public int? Position
         {
-            get { return position; }
+            get { return _position; }
 
             set
             {
                 if (value > -1585 && value < 1585)
-                    position = value;
+                    _position = value;
                 else
                     throw new ArgumentOutOfRangeException("Position", "Value must be in the range -1585 - 1585");
             }
@@ -371,7 +369,7 @@ namespace Novacode
         /// </summary>
         public double? Spacing
         {
-            get { return spacing; }
+            get { return _spacing; }
 
             set
             {
@@ -380,7 +378,7 @@ namespace Novacode
                 if (temp - (int)temp == 0)
                 {
                     if (value > -1585 && value < 1585)
-                        spacing = value;
+                        _spacing = value;
                     else
                         throw new ArgumentException("Spacing", "Value must be in the range: -1584 - 1584");
                 }
@@ -393,37 +391,37 @@ namespace Novacode
         /// <summary>
         /// The colour of the text.
         /// </summary>
-        public Color? FontColor { get { return fontColor; } set { fontColor = value; } }
+        public Color? FontColor { get { return _fontColor; } set { _fontColor = value; } }
 
         /// <summary>
         /// Highlight colour.
         /// </summary>
-        public Highlight Highlight { get { return highlight; } set { highlight = value; } }
+        public Highlight Highlight { get { return _highlight; } set { _highlight = value; } }
        
         /// <summary>
         /// The Underline style that this formatting applies.
         /// </summary>
-        public UnderlineStyle UnderlineStyle { get { return underlineStyle; } set { underlineStyle = value; } }
+        public UnderlineStyle UnderlineStyle { get { return _underlineStyle; } set { _underlineStyle = value; } }
         
         /// <summary>
         /// The underline colour.
         /// </summary>
-        public Color? UnderlineColor { get { return underlineColor; } set { underlineColor = value; } }
+        public Color? UnderlineColor { get { return _underlineColor; } set { _underlineColor = value; } }
         
         /// <summary>
         /// Misc settings.
         /// </summary>
-        public Misc Misc { get { return misc; } set { misc = value; } }
+        public Misc Misc { get { return _misc; } set { _misc = value; } }
         
         /// <summary>
         /// Is this text hidden or visible.
         /// </summary>
-        public bool Hidden { get { return hidden; } set { hidden = value; } }
+        public bool Hidden { get { return _hidden; } set { _hidden = value; } }
         
         /// <summary>
         /// Capitalization style.
         /// </summary>
-        public CapsStyle CapsStyle { get { return capsStyle; } set { capsStyle = value; } }
+        public CapsStyle CapsStyle { get { return _capsStyle; } set { _capsStyle = value; } }
         
         /// <summary>
         /// The font familt of this formatting.
@@ -432,64 +430,64 @@ namespace Novacode
         /// Bug found and fixed by krugs525 on August 12 2009.
         /// Use TFS compare to see exact code change.
         /// -->
-        public FontFamily FontFamily { get { return fontFamily; } set { fontFamily = value; } }
+        public FontFamily FontFamily { get { return _fontFamily; } set { _fontFamily = value; } }
 
         public int CompareTo(object obj)
         {
             Formatting other = (Formatting)obj;
 
-            if(other.hidden != this.hidden)
+            if(other._hidden != _hidden)
                 return -1;
 
-            if(other.bold != this.bold)
+            if(other._bold != _bold)
                 return -1;
 
-            if(other.italic != this.italic)
+            if(other._italic != _italic)
                 return -1;
 
-            if(other.strikethrough != this.strikethrough)
+            if(other._strikethrough != _strikethrough)
                 return -1;
 
-            if(other.script != this.script)
+            if(other._script != _script)
                 return -1;
 
-            if(other.highlight != this.highlight)
+            if(other._highlight != _highlight)
                 return -1;
 
-            if(other.size != this.size)
+            if(other._size != _size)
                 return -1;
 
-            if(other.fontColor != this.fontColor)
+            if(other._fontColor != _fontColor)
                 return -1;
 
-            if(other.underlineColor != this.underlineColor)
+            if(other._underlineColor != _underlineColor)
                 return -1;
 
-            if(other.underlineStyle != this.underlineStyle)
+            if(other._underlineStyle != _underlineStyle)
                 return -1;
 
-            if(other.misc != this.misc)
+            if(other._misc != _misc)
                 return -1;
 
-            if(other.capsStyle != this.capsStyle)
+            if(other._capsStyle != _capsStyle)
                 return -1;
 
-            if(other.fontFamily != this.fontFamily)
+            if(other._fontFamily != _fontFamily)
                 return -1;
 
-            if(other.percentageScale != this.percentageScale)
+            if(other._percentageScale != _percentageScale)
                 return -1;
 
-            if(other.kerning != this.kerning)
+            if(other._kerning != _kerning)
                 return -1;
 
-            if(other.position != this.position)
+            if(other._position != _position)
                 return -1;
 
-            if(other.spacing != this.spacing)
+            if(other._spacing != _spacing)
                 return -1;
 
-            if (!other.language.Equals(this.language))
+            if (!other._language.Equals(_language))
                 return -1;
 
             return 0;

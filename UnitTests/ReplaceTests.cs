@@ -6,7 +6,7 @@ using Novacode;
 namespace UnitTests
 {
     [TestClass]
-    public class RegExTest
+    public class ReplaceTests
     {
         private readonly Dictionary<string, string> _testPatterns = new Dictionary<string, string>
         {
@@ -15,7 +15,7 @@ namespace UnitTests
         };
         private readonly TestHelper _testHelper;
 
-        public RegExTest()
+        public ReplaceTests()
         {
             _testHelper = new TestHelper();
         }

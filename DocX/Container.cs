@@ -1,11 +1,12 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
-using System.IO.Packaging;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.IO;
+using System.IO.Packaging;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Novacode
 {
@@ -66,7 +67,7 @@ namespace Novacode
                 foreach (var p in paragraphs)
                 {
                     if ((p.Xml.ElementsAfterSelf().FirstOrDefault() != null) && (p.Xml.ElementsAfterSelf().First().Name.Equals(DocX.w + "tbl")))
-                        p.FollowingTable = new Table(this.Document, p.Xml.ElementsAfterSelf().First());
+                        p.FollowingTable = new Table(Document, p.Xml.ElementsAfterSelf().First());
 
                     p.ParentContainer = GetParentFromXmlName(p.Xml.Ancestors().First().Name.LocalName);
 
@@ -88,7 +89,7 @@ namespace Novacode
                 foreach (var p in paragraphs)
                 {
                     if ((p.Xml.ElementsAfterSelf().FirstOrDefault() != null) && (p.Xml.ElementsAfterSelf().First().Name.Equals(DocX.w + "tbl")))
-                        p.FollowingTable = new Table(this.Document, p.Xml.ElementsAfterSelf().First());
+                        p.FollowingTable = new Table(Document, p.Xml.ElementsAfterSelf().First());
 
                     p.ParentContainer = GetParentFromXmlName(p.Xml.Ancestors().First().Name.LocalName);
 
@@ -430,7 +431,7 @@ namespace Novacode
             if (newValue == null)
                 throw new ArgumentException("newValue cannot be null or empty", "newValue");
             // ReplaceText in Headers of the document.
-            var headerList = new List<Header> { Document.Headers.first, Document.Headers.even, Document.Headers.odd };
+            var headerList = new List<Header> { Document.Headers.First, Document.Headers.Even, Document.Headers.Odd };
             foreach (var header in headerList)
                 if (header != null)
                     foreach (var paragraph in header.Paragraphs)
@@ -441,7 +442,7 @@ namespace Novacode
                 paragraph.ReplaceText(searchValue, newValue, trackChanges, options, newFormatting, matchFormatting, formattingOptions);
 
             // ReplaceText in Footers of the document.
-            var footerList = new List<Footer> { Document.Footers.first, Document.Footers.even, Document.Footers.odd };
+            var footerList = new List<Footer> { Document.Footers.First, Document.Footers.Even, Document.Footers.Odd };
             foreach (var footer in footerList)
                 if (footer != null)
                     foreach (var paragraph in footer.Paragraphs)
@@ -468,8 +469,8 @@ namespace Novacode
             
             // ReplaceText in Headers/Footers of the document.
             var containerList = new List<IParagraphContainer> {
-                Document.Headers.first, Document.Headers.even, Document.Headers.odd,
-                Document.Footers.first, Document.Footers.even, Document.Footers.odd };
+                Document.Headers.First, Document.Headers.Even, Document.Headers.Odd,
+                Document.Footers.First, Document.Footers.Even, Document.Footers.Odd };
             foreach (var container in containerList)
                 if (container != null)
                     foreach (var paragraph in container.Paragraphs)
@@ -521,7 +522,7 @@ namespace Novacode
                 throw new ArgumentException("bookmark cannot be null or empty", "bookmarkName");
 
             var headerCollection = Document.Headers;
-            var headers = new List<Header> { headerCollection.first, headerCollection.even, headerCollection.odd };
+            var headers = new List<Header> { headerCollection.First, headerCollection.Even, headerCollection.Odd };
             foreach (var header in headers.Where(x => x != null))
                 foreach (var paragraph in header.Paragraphs)
                     paragraph.InsertAtBookmark(toInsert, bookmarkName);
@@ -530,7 +531,7 @@ namespace Novacode
                 paragraph.InsertAtBookmark(toInsert, bookmarkName);
 
             var footerCollection = Document.Footers;
-            var footers = new List<Footer> { footerCollection.first, footerCollection.even, footerCollection.odd };
+            var footers = new List<Footer> { footerCollection.First, footerCollection.Even, footerCollection.Odd };
             foreach (var footer in footers.Where(x => x != null))
                 foreach (var paragraph in footer.Paragraphs)
                     paragraph.InsertAtBookmark(toInsert, bookmarkName);
@@ -538,8 +539,8 @@ namespace Novacode
 
         public string[] ValidateBookmarks(params string[] bookmarkNames)
         {
-            var headers = new[] {Document.Headers.first, Document.Headers.even, Document.Headers.odd}.Where(h => h != null).ToList();
-            var footers = new[] {Document.Footers.first, Document.Footers.even, Document.Footers.odd}.Where(f => f != null).ToList();
+            var headers = new[] {Document.Headers.First, Document.Headers.Even, Document.Headers.Odd}.Where(h => h != null).ToList();
+            var footers = new[] {Document.Footers.First, Document.Footers.Even, Document.Footers.Odd}.Where(f => f != null).ToList();
 
             var nonMatching = new List<string>();
             foreach (var bookmarkName in bookmarkNames)
@@ -960,7 +961,7 @@ namespace Novacode
             return list;
         }
 
-        public List InsertList(List list, System.Drawing.FontFamily fontFamily, double fontSize)
+        public List InsertList(List list, FontFamily fontFamily, double fontSize)
         {
             foreach (var item in list.Items)
             {

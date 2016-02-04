@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO.Packaging;
 using System.IO;
+using System.IO.Packaging;
 
 namespace Novacode
 {
@@ -38,7 +38,7 @@ namespace Novacode
         {
             this.document = document;
             this.pr = pr;
-            this.id = pr.Id;
+            id = pr.Id;
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Novacode
       {
         get
         {
-          return Path.GetFileName(this.pr.TargetUri.ToString());
+          return Path.GetFileName(pr.TargetUri.ToString());
         }
       }
     }

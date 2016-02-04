@@ -1,24 +1,25 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Novacode
 {
     public class CustomProperty
     {
-        private string name;
-        private object value;
-        private string type;
+        private string _name;
+        private object _value;
+        private string _type;
 
         /// <summary>
         /// The name of this CustomProperty.
         /// </summary>
-        public string Name { get { return name;} }
+        public string Name { get { return _name;} }
 
         /// <summary>
         /// The value of this CustomProperty.
         /// </summary>
-        public object Value { get { return value; } }
+        public object Value { get { return _value; } }
 
-        internal string Type { get { return type; } }
+        internal string Type { get { return _type; } }
 
         internal CustomProperty(string name, string type, string value)
         {
@@ -33,19 +34,19 @@ namespace Novacode
 
                 case "i4":
                 {
-                    realValue = int.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
+                    realValue = int.Parse(value, CultureInfo.InvariantCulture);
                     break;
                 }
 
                 case "r8":
                 {
-                    realValue = Double.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
+                    realValue = Double.Parse(value, CultureInfo.InvariantCulture);
                     break;
                 }
 
                 case "filetime":
                 {
-                    realValue = DateTime.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
+                    realValue = DateTime.Parse(value, CultureInfo.InvariantCulture);
                     break;
                 }
 
@@ -58,16 +59,16 @@ namespace Novacode
                 default: throw new Exception();
             }
 
-            this.name = name;
-            this.type = type;
-            this.value = realValue;
+            _name = name;
+            _type = type;
+            _value = realValue;
         }
 
         private CustomProperty(string name, string type, object value)
         {
-            this.name = name;
-            this.type = type;
-            this.value = value;
+            _name = name;
+            _type = type;
+            _value = value;
         }
 
         /// <summary>
@@ -83,7 +84,7 @@ namespace Novacode
         /// </summary>
         /// <param name="name">The name of this CustomProperty.</param>
         /// <param name="value">The value of this CustomProperty.</param>
-        public CustomProperty(string name, int value) : this(name, "i4", value as object) { }
+        public CustomProperty(string name, int value) : this(name, "i4", value) { }
 
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace Novacode
         /// </summary>
         /// <param name="name">The name of this CustomProperty.</param>
         /// <param name="value">The value of this CustomProperty.</param>
-        public CustomProperty(string name, double value) : this(name, "r8", value as object) { }
+        public CustomProperty(string name, double value) : this(name, "r8", value) { }
 
 
         /// <summary>
@@ -99,13 +100,13 @@ namespace Novacode
         /// </summary>
         /// <param name="name">The name of this CustomProperty.</param>
         /// <param name="value">The value of this CustomProperty.</param>
-        public CustomProperty(string name, DateTime value) : this(name, "filetime", value.ToUniversalTime() as object) { }
+        public CustomProperty(string name, DateTime value) : this(name, "filetime", value.ToUniversalTime()) { }
 
         /// <summary>
         /// Create a new CustomProperty to hold a bool.
         /// </summary>
         /// <param name="name">The name of this CustomProperty.</param>
         /// <param name="value">The value of this CustomProperty.</param>
-        public CustomProperty(string name, bool value) : this(name, "bool", value as object) { }
+        public CustomProperty(string name, bool value) : this(name, "bool", value) { }
     }
 }

@@ -124,7 +124,7 @@ namespace Novacode
                     listTemplate = HelperFunctions.DecompressXMLResource("Novacode.Resources.numbering.default_decimal_abstract.xml.gz");
                     break;
                 default:
-                    throw new InvalidOperationException(string.Format("Unable to deal with ListItemType: {0}.", listType.ToString()));
+                    throw new InvalidOperationException(string.Format("Unable to deal with ListItemType: {0}.", listType));
             }
 
             var abstractNumTemplate = listTemplate.Descendants().Single(d => d.Name.LocalName == "abstractNum");

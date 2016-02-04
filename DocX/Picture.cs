@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
-using System.IO.Packaging;
 
 namespace Novacode
 {
@@ -12,7 +13,7 @@ namespace Novacode
     {
         private const int EmusInPixel = 9525;
 
-        internal Dictionary<PackagePart, PackageRelationship> picture_rels;
+        private Dictionary<PackagePart, PackageRelationship> picture_rels;
         
         internal Image img;
         private string id;
@@ -46,16 +47,16 @@ namespace Novacode
 		    
 		    this.img = img;
 		
-		    this.id =
+		    id =
 		    (
 		        from e in Xml.Descendants()
 		        where e.Name.LocalName.Equals("blip")
 		        select e.Attribute(XName.Get("embed", "http://schemas.openxmlformats.org/officeDocument/2006/relationships")).Value
 		    ).SingleOrDefault();
 		
-		    if (this.id == null)
+		    if (id == null)
 		    {
-		        this.id =
+		        id =
 		        (
 		            from e in Xml.Descendants()
 		            where e.Name.LocalName.Equals("imagedata")
@@ -63,7 +64,7 @@ namespace Novacode
 		        ).SingleOrDefault();
 		    }
 		
-		    this.name = 
+		    name = 
 		    (
 		        from e in Xml.Descendants()
 		        let a = e.Attribute(XName.Get("name"))
@@ -71,9 +72,9 @@ namespace Novacode
 		        select a.Value
 		    ).FirstOrDefault();
 		    
-		    if (this.name == null)
+		    if (name == null)
 		    {
-		        this.name = 
+		        name = 
 		        (
 		            from e in Xml.Descendants()
 		            let a = e.Attribute(XName.Get("title"))
@@ -82,7 +83,7 @@ namespace Novacode
 		        ).FirstOrDefault();
 		    }
 		  
-		    this.descr =
+		    descr =
 		    (
 		        from e in Xml.Descendants()
 		        let a = e.Attribute(XName.Get("descr"))
@@ -90,7 +91,7 @@ namespace Novacode
 		        select a.Value
 		    ).FirstOrDefault();
 		
-		    this.cx = 
+		    cx = 
 		    (
 		        from e in Xml.Descendants()
 		        let a = e.Attribute(XName.Get("cx"))
@@ -98,7 +99,7 @@ namespace Novacode
 		        select int.Parse(a.Value)
 		    ).FirstOrDefault();
 		    
-		    if (this.cx == 0)
+		    if (cx == 0)
 		    {
 		        XAttribute style = 
 		        (
@@ -108,12 +109,12 @@ namespace Novacode
 		            select a
 		        ).FirstOrDefault();
 		        
-		        string fromWidth = style.Value.Substring(style.Value.IndexOf("width:") + 6);
-		        var widthInt = ((double.Parse((fromWidth.Substring(0, fromWidth.IndexOf("pt"))).Replace(".", ","))) / 72.0) * 914400;
-		        cx = System.Convert.ToInt32(widthInt);
+		        string fromWidth = style.Value.Substring(style.Value.IndexOf("width:", StringComparison.Ordinal) + 6);
+		        var widthInt = ((double.Parse((fromWidth.Substring(0, fromWidth.IndexOf("pt", StringComparison.Ordinal))).Replace(".", ","))) / 72.0) * 914400;
+		        cx = Convert.ToInt32(widthInt);
 		    }
 		
-		    this.cy = 
+		    cy = 
 		    (
 		        from e in Xml.Descendants()
 		        let a = e.Attribute(XName.Get("cy"))
@@ -121,7 +122,7 @@ namespace Novacode
 		        select int.Parse(a.Value)
 		    ).FirstOrDefault();
 		    
-		    if (this.cy == 0)
+		    if (cy == 0)
 		    {
 		        XAttribute style = 
 		        (
@@ -131,19 +132,19 @@ namespace Novacode
 		            select a
 		        ).FirstOrDefault();
 		        
-		        string fromHeight = style.Value.Substring(style.Value.IndexOf("height:") + 7);
-		        var heightInt = ((double.Parse((fromHeight.Substring(0, fromHeight.IndexOf("pt"))).Replace(".", ","))) / 72.0) * 914400;
-		        cy = System.Convert.ToInt32(heightInt);
+		        string fromHeight = style.Value.Substring(style.Value.IndexOf("height:", StringComparison.Ordinal) + 7);
+		        var heightInt = ((double.Parse((fromHeight.Substring(0, fromHeight.IndexOf("pt", StringComparison.Ordinal))).Replace(".", ","))) / 72.0) * 914400;
+		        cy = Convert.ToInt32(heightInt);
 		    }
 		
-		    this.xfrm =
+		    xfrm =
 		    (
 		        from d in Xml.Descendants()
 		        where d.Name.LocalName.Equals("xfrm")
 		        select d
 		    ).SingleOrDefault();
 		
-		    this.prstGeom =
+		    prstGeom =
 		    (
 		        from d in Xml.Descendants()
 		        where d.Name.LocalName.Equals("prstGeom")
@@ -151,12 +152,12 @@ namespace Novacode
 		    ).SingleOrDefault();
 		
 		    if (xfrm != null)
-		        this.rotation = xfrm.Attribute(XName.Get("rot")) == null ? 0 : uint.Parse(xfrm.Attribute(XName.Get("rot")).Value);
+		        rotation = xfrm.Attribute(XName.Get("rot")) == null ? 0 : uint.Parse(xfrm.Attribute(XName.Get("rot")).Value);
 		}
 
         private void SetPictureShape(object shape)
         {
-            this.pictureShape = shape;
+            pictureShape = shape;
 
             XAttribute prst = prstGeom.Attribute(XName.Get("prst"));
             if (prst == null)
